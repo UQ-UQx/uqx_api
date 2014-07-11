@@ -26,6 +26,10 @@ cp [BASE_PATH]/config.example.py [BASE_PATH]/config.py
 vim [BASE_PATH]/config.py
 [[EDIT THE VALUES]]
 ```
+Set the courses to provide an API for
+```
+vim [BASE_PATH]/uqx_api/courses.py
+```
 Create the api database in your MySQL installation
 ```bash
 mysql -u root -p
