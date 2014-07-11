@@ -1,0 +1,7 @@
+*.DS_Store
+[Ii]gnore*/
+.idea/
+*.pyc
+.idea
+db.sqlite3
+config.py

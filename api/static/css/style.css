@@ -1,0 +1,46 @@
+div.navbar {
+    background:#4A105A;
+    width:100%;
+    border:0;
+    box-shadow:0;
+    border-radius:0;
+    position:fixed;
+    top:0;
+    left:0;
+}
+
+div.navbar ul.nav a {
+    font-size:120%;
+    color:#eee;
+    padding-top:13px;
+    padding-bottom:13px;
+}
+
+div.wrapper {
+    margin-top:100px;
+}
+
+div.navbar ul.nav a:hover {
+    color:#4A105A;
+}
+
+div.navbar ul.nav li.open a {
+    color:#4A105A;
+}
+
+footer {
+    margin-bottom:20px;
+}
+
+a {
+    color:#A287AF;
+}
+
+h1 {
+    color:#4A105A;
+}
+
+.btn-primary {
+    background-image: linear-gradient(#4A105A, #4A105A 60%, #4A105A 40%);
+    border-color:#A287AF;
+}
