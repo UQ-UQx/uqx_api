@@ -1,4 +1,4 @@
-API
+UQx API
 ======== 
 The UQx API is a REST API for taking injested edX research package and making it available for services to leverage.  The API
 supports OAuth2 and Basic authentication.  
@@ -43,6 +43,9 @@ Architecture
 The architecture of the UQx API follows django conventions and relies on the django-rest-framework framework.  The /api application contains the API.  
 APIs are added within the /api/views.py file (inside endpoints()), which then calls the appropraite class/method inside /api/apis.  For example, "student_ages"
 in the endpoints() calls the method genders() within /api/apis/students.py.
+
+The flow of the data is as follows:
+![UQx API Architecture](/README_ARCHITECTURE_IMAGE.png?raw=true "UQx API Architecture")
 
 Running Tests
 ---------------------
