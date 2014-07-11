@@ -45,7 +45,7 @@ APIs are added within the /api/views.py file (inside endpoints()), which then ca
 in the endpoints() calls the method genders() within /api/apis/students.py.
 
 The flow of the data is as follows:
-![UQx API Architecture](/README_ARCHITECTURE_IMG.png?raw=true "UQx API Architecture")
+![UQx API Architecture](/README_ARCHITECTURE_IMAGE.png?raw=true "UQx API Architecture")
 
 Running Tests
 ---------------------
