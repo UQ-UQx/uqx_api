@@ -20,6 +20,10 @@ Clone the repository
 ```bash
 git clone https://github.com/UQ-UQx/uqx_api.git [BASE_PATH]
 ```
+Install pip requirements
+```bash
+pip install -r requirements.txt
+```
 Set UQx API configuration
 ```bash
 cp [BASE_PATH]/config.example.py [BASE_PATH]/config.py
@@ -27,7 +31,7 @@ vim [BASE_PATH]/config.py
 [[EDIT THE VALUES]]
 ```
 Set the courses to provide an API for
-```
+```bash
 vim [BASE_PATH]/uqx_api/courses.py
 ```
 Create the api database in your MySQL installation
