@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from django.core.cache import cache
 
@@ -18,7 +19,7 @@ from datetime import timedelta
 
 cache_timeout = 60 * 60 * 24 * 8
 
-
+@csrf_exempt
 @api_view(('GET',))
 def api_index(request, theformat=None):
     """

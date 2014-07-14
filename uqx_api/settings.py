@@ -50,10 +50,12 @@ INSTALLED_APPS = (
     'provider.oauth2',
     'api',
     'rest_framework',
+    'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -91,6 +93,8 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 ROOT_URLCONF = 'uqx_api.urls'
 
 WSGI_APPLICATION = 'uqx_api.wsgi.application'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
