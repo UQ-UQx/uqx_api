@@ -12,6 +12,9 @@ Requirements
 The API should be run on a webserver such as apache on nginx, and be used on a server running mysql and mongo databases which are
 being populated by the injestor application: https://github.com/UQ-UQx/injestor.
 
+Memcache is also required to be running by default, or you can change it in [BASE_PATH]/uqx_api/settings.py under CACHE, please see:
+https://docs.djangoproject.com/en/1.4/topics/cache/
+
 Installation
 ---------------------
 [BASE_PATH] is the path where you want the UQx_API installed (such as /var/www/html/api)
