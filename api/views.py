@@ -130,13 +130,13 @@ def get_all_courses():
 
 
 def cache_save(path, data):
-    logger.info("Saving cache for path "+fixpath(path))
+    logger.info("Saving cache for path "+fixpath(path)+", times out in "+str(settings.CACHES['default']['TIMEOUT']))
     cache.set(fixpath(path), data, cache_timeout)
     pass
 
 
 def cache_get(path):
-    logger.info("Retrieving cache for path "+fixpath(path)+", times out in "+settings.CACHES['default']['TIMEOUT'])
+    logger.info("Retrieving cache for path "+fixpath(path)+", times out in "+str(settings.CACHES['default']['TIMEOUT']))
     return cache.get(fixpath(path))
 
 
