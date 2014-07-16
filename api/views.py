@@ -1,20 +1,22 @@
-from collections import OrderedDict
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
 from django.core.cache import cache
+import sys
+from datetime import timedelta
+from uqx_api import settings
 
 # APIs
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
+# Endpoints
 from api.apis.meta import *
 from api.apis.students import *
 from api.apis.discussions import *
 from api.apis.downloads import *
-import sys
-import copy
-from datetime import timedelta
+
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 
 cache_timeout = 60 * 60 * 24 * 8
@@ -67,7 +69,7 @@ def endpoints():
     points['meta_structure'] = {'path': 'meta/structure', 'option': 'course_id', 'requirevar': True}
     points['meta_countries'] = {'path': 'meta/countries'}
     points['meta_modes'] = {'path': 'meta/modes'}
-
+    logger.info("Getting endpoints")
     return points
 
 @api_view(('GET',))
@@ -89,9 +91,9 @@ def refresh_cache(request):
                 for course in courses:
                     request.path = basepath + the_endpoints[endpoint]['path']+"/"+course
                     getattr(sys.modules[__name__], endpoint)(virtual_request)
-    response['cachetime'] = uqx_api.settings.CACHES['default']['TIMEOUT']
+    response['cachetime'] = settings.CACHES['default']['TIMEOUT']
     now = datetime.now()
-    response['nextrefresh'] = now + timedelta(0, uqx_api.settings.CACHES['default']['TIMEOUT'])
+    response['nextrefresh'] = now + timedelta(0, settings.CACHES['default']['TIMEOUT'])
     return Response(response)
 
 # Private Methods
@@ -109,7 +111,7 @@ def api_cacherender(request):
 def is_cached(request):
     if cache.get(cache_path(request)):
         if 'refreshcache' in request.QUERY_PARAMS or hasattr(request, 'refreshcache') and request.refreshcache:
-            print "REFRESHING CACHE"
+            logger.info("Refreshing Cache")
             return False
         return True
     return False
@@ -128,13 +130,13 @@ def get_all_courses():
 
 
 def cache_save(path, data):
-    print "SAVING CACHE FOR PATH "+fixpath(path)
+    logger.info("Saving cache for path "+fixpath(path))
     cache.set(fixpath(path), data, cache_timeout)
     pass
 
 
 def cache_get(path):
-    print "GETTING CACHE"
+    logger.info("Retrieving cache for path "+fixpath(path))
     return cache.get(fixpath(path))
 
 

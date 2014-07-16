@@ -3,6 +3,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from api.models import Log
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def download_os(request):

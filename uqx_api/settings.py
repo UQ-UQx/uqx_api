@@ -117,6 +117,44 @@ CACHES = {
     }
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'api': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/api.log',
+            'formatter': 'verbose'
+        },
+        'django': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/django.log',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'api': {
+            'handlers': ['api'],
+            'level': 'DEBUG',
+        },
+        'django': {
+            'handlers': ['django'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%Y-%m-%d %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/

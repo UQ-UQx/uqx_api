@@ -5,6 +5,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from api.models import DiscussionForum
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def discussion_countries(request, course_id='all'):
@@ -61,8 +64,6 @@ def discussion_countries(request, course_id='all'):
         else:
             post_enrol = [country, 0, userSum, 0]
         data['country_post_enrol'].append(post_enrol)
-
-    print data
 
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
@@ -199,8 +200,6 @@ def discussion_category(request, course_id):
         category_sort_by_answer = DiscussionForum.category_sort_by_answer(col_df, category_id, data['popular_number'])
         data[category_id]['popular_threads'] = category_sort_by_answer['popular_threads']
         data[category_id]['zones'] = category_sort_by_answer['zones']
-
-        print data
 
     return api.views.api_render(request, data, status.HTTP_200_OK)
 

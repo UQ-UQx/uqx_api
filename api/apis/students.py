@@ -5,6 +5,10 @@ from api.models import UserProfile, UserEnrol, Log
 from collections import OrderedDict
 from datetime import datetime
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 @api_view(['GET'])
 def student_genders(request, course_id='all'):
     """
@@ -71,7 +75,7 @@ def student_ages(request, course_id='all'):
                 try:
                     theage = 2014 - int(user.year_of_birth)
                 except ValueError:
-                    print "NOT A YEAR"
+                    logger.error("Age is not a year")
                 if theage < 12:
                     user.year_of_birth = "Less than 12"
                 elif theage < 16:
@@ -91,7 +95,6 @@ def student_ages(request, course_id='all'):
                 else:
                     user.year_of_birth = "Over 50"
             if user.year_of_birth not in age:
-                print age
                 age[user.year_of_birth] = 0
             age[user.year_of_birth] += 1
 

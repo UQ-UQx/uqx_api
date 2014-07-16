@@ -7,6 +7,10 @@ import pycountry
 import urllib2
 import json
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 @api_view(['GET'])
 def meta_courses(request):
     """

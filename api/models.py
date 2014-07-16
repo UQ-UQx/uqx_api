@@ -6,7 +6,9 @@ from mongoengine.connection import _get_db
 import pymongo
 from bson.objectid import ObjectId
 
-# Create your models here.
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 connect('logs')
 
@@ -56,13 +58,10 @@ class Log(Document):
     @staticmethod
     def countcountryenrolments(collectionname, course_id):
         #DO  db.clickstream.ensureIndex( {event_type: 1,"context.course_id": 1} )
-        print "DIN DING"
         #db.clickstream_tmp.aggregate(    [      { $match : {'context.course_id':'UQx/Think101x/1T2014','event_type':'edx.course.enrollment.activated'} },      { $group : { _id : "$country", thecount: { $sum: 1 } } }    ] )
         results = _get_db()[collectionname].aggregate([ {"$match":{'context.course_id':course_id,
                                                                    'event_type':'edx.course.enrollment.activated'}},{"$group":{"_id": "$country", "thecount": { "$sum": 1 } }} ])
-        print results
         results = results['result']
-        #print results
         countries = []
         total = 0
         for result in results:
@@ -122,7 +121,7 @@ class DiscussionForum(object):
         try:
             DiscussionForum.mongo_client = pymongo.MongoClient('localhost', 27017)
         except pymongo.errors.ConnectionFailure, e:
-            print "Could not connect to MongoDB: %s" % e
+            logger.error("Could not connect to MongoDB: %s" % e)
 
 
     @staticmethod
@@ -257,9 +256,6 @@ class DiscussionForum(object):
                 post['parent_ids'] = [post['parent_id']]
             top_comment.append(post)
 
-        print top_thread
-        print top_comment
-
         return {"threads": top_thread, "comments": top_comment}
 
 
@@ -353,7 +349,6 @@ class DiscussionForum(object):
     #changed
     def post_user_country(course):
         user_post_dict = DiscussionForum.posts_gb_users(course)
-        print 'user_post_dict' + str(user_post_dict)
         if user_post_dict:
             user_2_country = DiscussionForum.user_2_country(course, user_post_dict.keys())
 
