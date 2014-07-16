@@ -136,7 +136,7 @@ def cache_save(path, data):
 
 
 def cache_get(path):
-    logger.info("Retrieving cache for path "+fixpath(path))
+    logger.info("Retrieving cache for path "+fixpath(path)+", times out in "+settings.CACHES['default']['TIMEOUT'])
     return cache.get(fixpath(path))
 
 
