@@ -19,8 +19,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-cache_timeout = 60 * 60 * 24 * 8
-
 @csrf_exempt
 @api_view(('GET',))
 def api_index(request, theformat=None):
@@ -131,7 +129,7 @@ def get_all_courses():
 
 def cache_save(path, data):
     logger.info("Saving cache for path "+fixpath(path)+", times out in "+str(settings.CACHES['default']['TIMEOUT']))
-    cache.set(fixpath(path), data, cache_timeout)
+    cache.set(fixpath(path), data, settings.CACHES['default']['TIMEOUT'])
     pass
 
 

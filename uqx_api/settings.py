@@ -110,10 +110,15 @@ USE_L10N = True
 USE_TZ = True
 
 CACHES = {
+    # 'default': {
+    #     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    #     'LOCATION': 'uqx_api',
+    #     'TIMEOUT': 60*60*24*14 #hold cache for 2 weeks
+    # }
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'uqx_api',
-        'TIMEOUT': 60*60*24*14
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'TIMEOUT': 60*60*24*14 #hold cache for 2 weeks
     }
 }
 
