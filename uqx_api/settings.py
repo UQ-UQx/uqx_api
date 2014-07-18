@@ -74,6 +74,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.OAuth2Authentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
