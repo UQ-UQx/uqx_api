@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import courses
+import datetime
 
 try:
     import config
@@ -79,6 +80,22 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ]
+}
+
+JWT_AUTH = {
+#    'JWT_ENCODE_HANDLER':
+#    'rest_framework_jwt.utils.jwt_encode_handler',
+
+#    'JWT_DECODE_HANDLER':
+#    'rest_framework_jwt.utils.jwt_decode_handler',
+
+#    'JWT_PAYLOAD_HANDLER':
+#    'rest_framework_jwt.utils.jwt_payload_handler',
+
+    #'JWT_SECRET_KEY': settings.SECRET_KEY,
+#    'JWT_ALGORITHM': 'HS256',
+#    'JWT_LEEWAY': 0,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=24)
 }
 
 TEMPLATE_CONTEXT_PROCESSORS = (
