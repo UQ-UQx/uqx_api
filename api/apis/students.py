@@ -241,7 +241,7 @@ def student_dates(request, course_id='all'):
             activecount += data[date]['active']
             data[date]['aggregate_enrolled'] = count
             data[date]['aggregate_active'] = activecount
-
+    data = OrderedDict(sorted(data.items()))
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
