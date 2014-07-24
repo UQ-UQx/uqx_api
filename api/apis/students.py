@@ -234,14 +234,18 @@ def student_dates(request, course_id='all'):
             if user.is_active == "1":
                 data[thedate]['active'] += 1
 
-        count = 0
-        activecount = 0
-        for date in data:
-            count += data[date]['enrolled']
-            activecount += data[date]['active']
-            data[date]['aggregate_enrolled'] = count
-            data[date]['aggregate_active'] = activecount
     data = OrderedDict(sorted(data.items()))
+
+    count = 0
+    activecount = 0
+    for date in data:
+        count += data[date]['enrolled']
+        activecount += data[date]['active']
+        data[date]['aggregate_enrolled'] = count
+        data[date]['aggregate_active'] = activecount
+
+
+
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
