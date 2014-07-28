@@ -6,3 +6,4 @@
 db.sqlite3
 config.py
 logs/*.log
+youtube_oauth2.json

@@ -204,6 +204,9 @@ for name in courses.EDX_DATABASES:
 BRAND = 'UQx'
 BRAND_WEBSITE = 'https://uqx.uq.edu.au'
 
+YOUTUBE_CLIENT_ID = config.YOUTUBE_CLIENT_ID
+YOUTUBE_CLIENT_SECRET = config.YOUTUBE_CLIENT_SECRET
+
 TEMPLATE_DIRS = (
     BASE_DIR + '/apis'
     "%s/templates" % BASE_DIR

@@ -13,6 +13,7 @@ from api.apis.meta import *
 from api.apis.students import *
 from api.apis.discussions import *
 from api.apis.downloads import *
+from api.apis.videos import *
 
 # Logging
 import logging
@@ -67,6 +68,8 @@ def endpoints():
     points['meta_structure'] = {'path': 'meta/structure', 'option': 'course_id', 'requirevar': True}
     points['meta_countries'] = {'path': 'meta/countries'}
     points['meta_modes'] = {'path': 'meta/modes'}
+
+    points['videos_views'] = {'path': 'videos/views'}
     logger.info("Getting endpoints")
     return points
 

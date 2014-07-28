@@ -21,3 +21,6 @@ virtualenv==1.11.4
 wsgiref==0.1.2
 django-cors-headers
 djangorestframework-jwt
+google-api-python-client
+httplib2
+python-gflags
