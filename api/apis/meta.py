@@ -6,7 +6,9 @@ from collections import OrderedDict
 import pycountry
 import urllib2
 import json
+import datetime
 from api.models import UserEnrol
+import dateutil
 
 # Logging
 import logging
@@ -60,17 +62,31 @@ def meta_courseinfo(request):
         except:
             return api.views.api_render(request, {'error': 'Could not load course data'}, status.HTTP_404_NOT_FOUND)
         data = json.loads(data)
+        max_per_day_date = datetime.datetime.now()
         if 'end' in data:
             course['end'] = data['end']
         if 'start' in data:
             course['start'] = data['start']
+            max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
         if 'display_name' in data:
             course['display_name'] = data['display_name']
+        max_per_day_date = max_per_day_date.replace(tzinfo=None)
+        total = 0
+        within_per_day = 0
+        first_date = datetime.datetime.now()
+        for user in UserEnrol.objects.using(db).all():
+            userdate = dateutil.parser.parse(user.created)
+            if first_date > userdate:
+                first_date = userdate
+            if userdate < max_per_day_date:
+                within_per_day += 1
+            total += 1
+        range = (max_per_day_date - first_date).days
 
-        course['enrolments'] = 9999
-        course['enrolments_per_day'] = 3.4
+        per_day = round(within_per_day/range,2)
 
-
+        course['enrolments'] = total
+        course['enrolments_per_day'] = per_day
         courses.append(course)
     data = courses
     return api.views.api_render(request, data, status.HTTP_200_OK)
