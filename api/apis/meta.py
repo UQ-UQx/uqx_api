@@ -6,6 +6,7 @@ from collections import OrderedDict
 import pycountry
 import urllib2
 import json
+from api.models import UserEnrol
 
 # Logging
 import logging
@@ -35,7 +36,7 @@ def meta_courses(request):
 @api_view(['GET'])
 def meta_courseinfo(request):
     """
-    Lists the course information, in particular the course ID
+    Lists the course information, in particular the course ID with extra information
     """
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
@@ -72,6 +73,29 @@ def meta_courseinfo(request):
 
         courses.append(course)
     data = courses
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def meta_uniques(request):
+    """
+    The number of unique students for UQx courses
+    """
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+    users = []
+    total = 0
+    for db in uqx_api.courses.EDX_DATABASES:
+        if db == 'default':
+            continue
+
+        for user in UserEnrol.objects.using(db).all():
+            total += 1
+            if user.user_id not in users:
+                users.append(user.user_id)
+    data = OrderedDict()
+    data['uniques'] = len(users)
+    data['total'] = total
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
