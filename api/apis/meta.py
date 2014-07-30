@@ -66,6 +66,9 @@ def meta_courseinfo(request):
         if 'display_name' in data:
             course['display_name'] = data['display_name']
 
+        course['enrolments'] = 9999
+        course['enrolments_per_day'] = 3.4
+
 
         courses.append(course)
     data = courses
