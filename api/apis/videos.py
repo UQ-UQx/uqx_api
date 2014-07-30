@@ -11,7 +11,6 @@ import sys
 
 from apiclient.discovery import build
 from oauth2client.file import Storage
-from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.tools import run
 from uqx_api import settings
@@ -22,11 +21,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def youtube_setup():
+def youtube_setup(course_id):
     global api_youtube
     global api_youtube_analytics
 
-    youtube_file = "youtube.json"
     youtube_scopes = ["https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/yt-analytics.readonly"]
     youtube_servicename = "youtube"
     youtube_version = "v3"
@@ -37,7 +35,7 @@ def youtube_setup():
                            client_secret=settings.YOUTUBE_CLIENT_SECRET,
                            scope=" ".join(youtube_scopes))
 
-    storage = Storage("youtube_oauth2.json")
+    storage = Storage("cache/youtube_"+course_id+"_oauth2.json")
     youtube_credentials = storage.get()
 
     print youtube_credentials
@@ -92,31 +90,28 @@ def youtube_query(command, options):
 
 
 @api_view(['GET'])
-def videos_views(request):
+def videos_views(request, course_id):
     """
     Lists the course information, in particular the course ID
     """
-
-
-
-
-
-
+    course = api.views.get_course(course_id)
+    if course is None:
+        return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
 
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
-    youtube_setup()
 
+    youtube_setup(course_id)
     now = datetime.now()
     one_day_ago = (now - timedelta(days=1)).strftime("%Y-%m-%d")
-    one_week_ago = (now - timedelta(days=365)).strftime("%Y-%m-%d")
+    one_year_ago = (now - timedelta(days=999)).strftime("%Y-%m-%d")
     parser = OptionParser()
     parser.add_option("--metrics", dest="metrics", help="Report metrics",
-      default="views,comments,favoritesAdded,favoritesRemoved,likes,dislikes,shares")
+      default="views,comments,estimatedMinutesWatched,averageViewDuration")
     parser.add_option("--dimensions", dest="dimensions", help="Report dimensions",
       default="video")
     parser.add_option("--start-date", dest="start_date",
-      help="Start date, in YYYY-MM-DD format", default=one_week_ago)
+      help="Start date, in YYYY-MM-DD format", default=one_year_ago)
     parser.add_option("--end-date", dest="end_date",
       help="End date, in YYYY-MM-DD format", default=one_day_ago)
     parser.add_option("--start-index", dest="start_index", help="Start index",
@@ -125,8 +120,8 @@ def videos_views(request):
       default=10, type="int")
     parser.add_option("--sort", dest="sort", help="Sort order", default="-views")
     (options, args) = parser.parse_args()
-
     data = youtube_query("get_stats", options)
+
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 

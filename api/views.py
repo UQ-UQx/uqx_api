@@ -65,11 +65,12 @@ def endpoints():
     points['download_countries'] = {'path': 'downloads/countries'}
 
     points['meta_courses'] = {'path': 'meta/courses'}
+    points['meta_courseinfo'] = {'path': 'meta/courseinfo'}
     points['meta_structure'] = {'path': 'meta/structure', 'option': 'course_id', 'requirevar': True}
     points['meta_countries'] = {'path': 'meta/countries'}
     points['meta_modes'] = {'path': 'meta/modes'}
 
-    points['videos_views'] = {'path': 'videos/views'}
+    points['videos_views'] = {'path': 'videos/views', 'option': 'course_id', 'requirevar': True}
     logger.info("Getting endpoints")
     return points
 

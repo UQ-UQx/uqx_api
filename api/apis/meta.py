@@ -33,6 +33,46 @@ def meta_courses(request):
 
 
 @api_view(['GET'])
+def meta_courseinfo(request):
+    """
+    Lists the course information, in particular the course ID
+    """
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+    courses = []
+    for db in uqx_api.courses.EDX_DATABASES:
+        if db == 'default':
+            continue
+
+        course = OrderedDict()
+        course['id'] = db
+        course['name'] = str(db).replace('_', ' ')
+        course['icon'] = uqx_api.courses.EDX_DATABASES[db]['icon']
+
+        coursedb = api.views.get_course(course['id'])
+
+        filename = coursedb['dbname'].replace("_", "-")
+        courseurl = 'https://tools.ceit.uq.edu.au/datasources/course_structure/'+filename+'.json';
+        data = '[]'
+        try:
+            data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')
+        except:
+            return api.views.api_render(request, {'error': 'Could not load course data'}, status.HTTP_404_NOT_FOUND)
+        data = json.loads(data)
+        if 'end' in data:
+            course['end'] = data['end']
+        if 'start' in data:
+            course['start'] = data['start']
+        if 'display_name' in data:
+            course['display_name'] = data['display_name']
+
+
+        courses.append(course)
+    data = courses
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def meta_countries(request):
     """
     Lists the country codes and names
