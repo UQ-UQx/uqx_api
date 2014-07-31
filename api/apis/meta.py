@@ -1,6 +1,6 @@
 import api.views
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 import uqx_api.courses
 from collections import OrderedDict
 import pycountry
@@ -9,12 +9,14 @@ import json
 import datetime
 from api.models import UserEnrol
 import dateutil
+from rest_framework.permissions import AllowAny
 
 # Logging
 import logging
 logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_courses(request):
     """
     Lists the course information, in particular the course ID
@@ -36,6 +38,7 @@ def meta_courses(request):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_courseinfo(request):
     """
     Lists the course information, in particular the course ID with extra information
@@ -93,6 +96,7 @@ def meta_courseinfo(request):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_uniques(request):
     """
     The number of unique students for UQx courses
@@ -116,6 +120,7 @@ def meta_uniques(request):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_countries(request):
     """
     Lists the country codes and names
@@ -130,6 +135,7 @@ def meta_countries(request):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_modes(request):
     """
     Lists the modes of enrolment

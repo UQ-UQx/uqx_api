@@ -3,6 +3,7 @@ from django.core.cache import cache
 import sys
 from datetime import timedelta
 from uqx_api import settings
+from rest_framework.permissions import AllowAny
 
 # APIs
 from rest_framework.response import Response
@@ -22,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @api_view(('GET',))
+@permission_classes((AllowAny, ))
 def api_index(request, theformat=None):
     """
     Lists the currently available API endpoints.

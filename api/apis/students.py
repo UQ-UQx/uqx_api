@@ -1,15 +1,17 @@
 import api.views
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from api.models import UserProfile, UserEnrol, Log
 from collections import OrderedDict
 from datetime import datetime
+from rest_framework.permissions import AllowAny
 
 # Logging
 import logging
 logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_genders(request, course_id='all'):
     """
     Lists all genders for the enrolled students
@@ -47,6 +49,7 @@ def student_genders(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_ages(request, course_id='all'):
     """
     Lists all ages for the enrolled students
@@ -103,6 +106,7 @@ def student_ages(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_educations(request, course_id='all'):
     """
     Lists all prior education levels for the enrolled students
@@ -147,6 +151,7 @@ def student_educations(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_modes(request, course_id='all'):
     """
     Lists all modes of enrolment for the enrolled students
@@ -180,6 +185,7 @@ def student_modes(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_countries(request, course_id='all'):
     """
     Lists
