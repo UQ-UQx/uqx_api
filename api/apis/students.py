@@ -204,6 +204,7 @@ def student_countries(request, course_id='all'):
             return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
         courses.append(course['id'])
     data = OrderedDict()
+    total = 0
     for course_id in courses:
         course = api.views.get_course(course_id)
         coursedata = Log.countcountryenrolments('clickstream', course['mongoname'])
@@ -211,7 +212,9 @@ def student_countries(request, course_id='all'):
             if countrydata['country'] not in data:
                 data[countrydata['country']] = {'count': 0, 'percentage': 0}
             data[countrydata['country']]['count'] += countrydata['count']
-            data[countrydata['country']]['percentage'] += countrydata['percentage']
+            total += countrydata['count']
+    for country in data:
+        data[country]['percentage'] = float(data[country]['count']) / float(total)*100
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
