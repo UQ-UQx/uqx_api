@@ -1,10 +1,14 @@
+import json
+import urllib2
 import api.views
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from api.models import UserProfile, UserEnrol, Log
+from api.models import UserProfile, UserEnrol, Log, StudentModule
 from collections import OrderedDict
-from datetime import datetime
+import datetime
 from rest_framework.permissions import AllowAny
+import random
+import dateutil
 
 # Logging
 import logging
@@ -304,4 +308,90 @@ def student_active(request, course_id='all'):
 
 
 
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def student_activity(request, course_id='all'):
+    starttime = datetime.datetime.now()
+    grouptypes = True
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+    course = api.views.get_course(course_id)
+    if course is None:
+        return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+
+    #Course Structure Read
+    filename = course['dbname'].replace("_", "-")
+    courseurl = 'https://tools.ceit.uq.edu.au/datasources/course_structure/'+filename+'.json'
+    validelements = []
+    structure = {}
+    try:
+        data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')
+    except:
+        return api.views.api_render(request, {'error': 'Could not find course file'}, status.HTTP_404_NOT_FOUND)
+    print "Loading structure"
+    structure = json.loads(data)
+    weeknumber = 1
+    for week in structure['children']:
+        seqnumber = 1
+        for sequential in week['children']:
+            uid = 'Week '+str(weeknumber)+"."+str(seqnumber)
+            element = {
+                'week': str(weeknumber),
+                'tag': sequential['tag'],
+                'url_name': sequential['url_name'],
+                'uid': uid+" Sequence"+"_url_"+sequential['url_name']
+            }
+            validelements.append(element)
+            for vertical in sequential['children']:
+                probnumber = 1
+                for problem in vertical['children']:
+                    if problem['tag'] != 'html' and problem['tag'] != 'discussion' and problem['tag'] != 'lti':
+                        element = {
+                            'week': str(weeknumber),
+                            'tag': problem['tag'],
+                            'url_name': problem['url_name'],
+                            'uid': uid+" "+problem['tag']+" "+str(probnumber)+"_url_"+problem['url_name']
+                        }
+                        if 'display_name' in problem:
+                            element['display_name'] = problem['display_name']
+                        validelements.append(element)
+                        probnumber += 1
+            seqnumber += 1
+        weeknumber += 1
+        #break
+    start_date = dateutil.parser.parse(structure['start'])
+    print "Loaded structure"
+    weeks = []
+    weeks.append(start_date)
+    print "Working out weeks"
+    last_date = start_date
+    for i in range(0,10):
+        last_date = last_date+datetime.timedelta(days=7)
+        weeks.append(last_date)
+    print "Worked out weeks"
+
+    #clickstreamdata = Log.find_events('clickstream_hypers_301x_sample', course['mongoname'])
+    #print clickstreamdata
+
+
+    data = []
+    print "Starting elements"
+    elcount = 0
+    for element in validelements:
+        print "starting element "+str(elcount)+"/"+str(len(validelements))+ " time difference is "+str(datetime.datetime.now() - starttime)+" seconds"
+        activity = OrderedDict()
+        activity['Activity'] = {'url': element['url_name'], 'tag': element['tag'], 'uid': element['uid']}
+        if 'week' in element:
+            activity['Activity']['week'] = element['week']
+        i = 1
+        for week in weeks:
+            nextweek = week+datetime.timedelta(days=7)
+            activity['Week '+str(i)] = StudentModule.objects.using(course_id).filter(module_id__contains=element['url_name'], created__range=[week, nextweek]).values('student_id').distinct().count()
+            i += 1
+        data.append(activity)
+        elcount += 1
+    print "Finished elements"
+    print "TIME DIFFERENCE "+str(datetime.datetime.now() - starttime)+" SECONDS"
     return api.views.api_render(request, data, status.HTTP_200_OK)

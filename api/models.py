@@ -72,6 +72,11 @@ class Log(Document):
         return countries
 
     @staticmethod
+    def find_events(collection_name, course_id):
+        results = _get_db()[collection_name].aggregate([ {"$match":{'context.course_id':course_id}},{"$group": {"_id": "$username", "events":{"$addToSet":"$event_type"}}}])
+        return results
+
+    @staticmethod
     def activeusersdaily(collectionname, course_id):
         results = _get_db()[collectionname].aggregate([ {"$match":{'context.course_id':course_id}},{"$group":{"_id": {"$substr":["$time",0,10]}, "users":{"$addToSet":"$username"} }}, {"$unwind":"$users"}, {"$group":{"_id":"$_id","userCount":{"$sum":1}}} ])
         results = results['result']
@@ -111,6 +116,16 @@ class UserEnrol(models.Model):
 
     class Meta:
         db_table = 'student_courseenrollment'
+
+
+class StudentModule(models.Model):
+    module_type = models.CharField(max_length=255)
+    module_id = models.CharField(max_length=255)
+    student_id = models.CharField(max_length=255)
+    created = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'courseware_studentmodule'
 
 
 class DiscussionForum(object):
