@@ -58,10 +58,10 @@ def endpoints():
     points['student_activity'] = {'path': 'students/student_activity', 'option': 'course_id', 'requirevar': True}
 
     points['discussion_countries'] = {'path': 'discussions/countries', 'option': 'course_id'}
-    points['discussion_dates'] = {'path': 'discussions/dates', 'option': 'course_id'}
+    points['discussion_dates'] = {'path': 'discussions/dates', 'option': 'course_id', 'requirevar': True}
     points['discussion_popular'] = {'path': 'discussions/popular', 'option': 'course_id'}
     points['discussion_top'] = {'path': 'discussions/top', 'option': 'course_id'}
-    points['discussion_category'] = {'path': 'discussion/category', 'option': 'course_id', 'requirevar': True}
+    points['discussion_category'] = {'path': 'discussions/category', 'option': 'course_id', 'requirevar': True}
 
     points['download_os'] = {'path': 'downloads/os'}
     points['download_browsers'] = {'path': 'downloads/browsers'}

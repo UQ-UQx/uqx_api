@@ -1,5 +1,6 @@
 from django.db import models
 from mongoengine import *
+from datetime import datetime
 from bson import Code
 from mongoengine.connection import _get_db
 
@@ -142,12 +143,12 @@ class DiscussionForum(object):
     @staticmethod
     def min_date(col_df):
         min_date_post = col_df.find().sort("created_at", 1).limit(1)[0]
-        return str(min_date_post['created_at'])
+        return min_date_post['created_at'].date()
 
     @staticmethod
     def max_date(col_df):
         max_date_post = col_df.find().sort("created_at", -1).limit(1)[0]
-        return str(max_date_post['created_at'])
+        return max_date_post['created_at'].date()
 
     @staticmethod
     def category_group_by_date(col_def, category_id):
@@ -301,6 +302,9 @@ class DiscussionForum(object):
         db_df = DiscussionForum.mongo_client['discussion_forum']
         col_df = db_df[course['discussiontable']]
 
+        min_date = DiscussionForum.min_date(col_df)
+        max_date = DiscussionForum.max_date(col_df)
+
         comment_datecounts = {}
         comment_thread_datecounts = {}
 
@@ -314,10 +318,8 @@ class DiscussionForum(object):
                 if post_date not in comment_thread_datecounts:
                     comment_thread_datecounts[post_date] = 0
                 comment_thread_datecounts[post_date] += 1
-
-        return {"comment": comment_datecounts, "comment_thread": comment_thread_datecounts}
-
-
+                
+        return {"comment": comment_datecounts, "comment_thread": comment_thread_datecounts, 'min_date': min_date, 'max_date': max_date}
 
     @staticmethod
     #changed

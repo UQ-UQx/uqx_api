@@ -4,6 +4,7 @@ import urllib2
 from rest_framework import status
 from rest_framework.decorators import api_view
 from api.models import DiscussionForum
+from datetime import date, datetime, timedelta
 
 # Logging
 import logging
@@ -69,53 +70,49 @@ def discussion_countries(request, course_id='all'):
 
 
 @api_view(['GET'])
-def discussion_dates(request, course_id='all'):
+def discussion_dates(request, course_id):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
-    courses = {}
-    if course_id == 'all':
-        courses = api.views.get_all_courses()
-    else:
-        course = api.views.get_course(course_id)
-        if course is None:
-            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
-        courses[course_id] = course
+    course = api.views.get_course(course_id)
+    if course is None:
+        return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
     DiscussionForum.connect_to_mongo()
+    group_by_date = DiscussionForum.group_by_date(course)
+    delta = group_by_date['max_date'] - group_by_date['min_date']
+
     data = {}
-    # Data for the chart based on daily posts
-    data['comments'] = {}
-    data['threads'] = {}
-    for course in courses.values():
-        group_by_date = DiscussionForum.group_by_date(course)
-        for date, postNum in group_by_date['comment'].items():
-            str_date = str(date)
-            if str_date in data['comments']:
-                data['comments'][str_date] += postNum
-            else:
-                data['comments'][str_date] = postNum
-        for date, postNum in group_by_date['comment_thread'].items():
-            str_date = str(date)
-            if str_date in data['threads']:
-                data['threads'][str_date] += postNum
-            else:
-                data['threads'][str_date] = postNum
+    data['min_date'] = str(group_by_date['min_date'])
+    data['max_date'] = str(group_by_date['max_date'])
+    data['comment_datecounts'] = []
+    data['thread_datecounts'] = []
 
-    data['comment_datecounts'] = sorted(data['comments'].iteritems())
-    data['thread_datecounts'] = sorted(data['threads'].iteritems())
+    for i in range(delta.days + 1):
+        dateinside = group_by_date['min_date'] + timedelta(days=i)
+        str_date = str(dateinside)
+        if dateinside in group_by_date['comment']:
+            #data['comment_datecounts'][str_date] = group_by_date['comment'][dateinside]
+            data['comment_datecounts'].append([str_date, group_by_date['comment'][dateinside]])
+        else:
+            #data['comment_datecounts'][str_date] = 0
+            data['comment_datecounts'].append([str_date, 0])
+        if dateinside in group_by_date['comment_thread']:
+            #data['thread_datecounts'][str_date] = group_by_date['comment_thread'][dateinside]
+            data['thread_datecounts'].append([str_date, group_by_date['comment_thread'][dateinside]])
+        else:
+            #data['thread_datecounts'][str_date] = 0
+            data['thread_datecounts'].append([str_date, 0])
 
-    comment_datecountsaggregate = {}
-    count = 0
-    for key, value in data['comment_datecounts']:
-        count += value
-        comment_datecountsaggregate[key] = count
-    data['comment_datecountsaggregate'] = sorted(comment_datecountsaggregate.iteritems())
+    comm_total = 0
+    thread_total = 0
+    data['comment_datecountsaggregate'] = []
+    data['thread_datecountsaggregate'] = []
+    for str_date, count in data['comment_datecounts']:
+        comm_total += count
+        data['comment_datecountsaggregate'].append([str_date, comm_total])
+    for str_date, count in data['thread_datecounts']:
+        thread_total += count
+        data['thread_datecountsaggregate'].append([str_date, thread_total])
 
-    thread_datecountsaggregate = {}
-    count = 0
-    for key, value in data['thread_datecounts']:
-        count += value
-        thread_datecountsaggregate[key] = count
-    data['thread_datecountsaggregate'] = sorted(thread_datecountsaggregate.iteritems())
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
@@ -185,8 +182,8 @@ def discussion_category(request, course_id):
     DiscussionForum.connect_to_mongo()
     db_df = DiscussionForum.mongo_client['discussion_forum']
     col_df = db_df[course['discussiontable']]
-    data['min_date'] = DiscussionForum.min_date(col_df)
-    data['max_date'] = DiscussionForum.max_date(col_df)
+    data['min_date'] = str(DiscussionForum.min_date(col_df))
+    data['max_date'] = str(DiscussionForum.max_date(col_df))
     data['popular_number'] = 20
 
     for category in data['categories']:
