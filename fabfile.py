@@ -26,6 +26,7 @@ def deploy():
         remote_vc("git reset --hard", "Resetting changes to remote", True)
         remote_vc("git pull", "Pulling from git", True)
         remote_vc("/etc/init.d/nginx restart", "Restarting nginx", True)
+        remote_vc("/etc/init/uwsgi > /tmp/uwsgi.log &", "Restarting WSGI", True)
 
 
 def create():
