@@ -34,7 +34,11 @@ def student_genders(request, course_id='all'):
             return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
         courses.append(course['id'])
     gender_map = {'m': 'Male', 'f': 'Female', 'o': 'Other'}
-    gender = {'Male': 0, 'Female': 0, 'Other': 0, 'Unspecified': 0}
+    gender = OrderedDict()
+    gender['Male'] = 0
+    gender['Female'] = 0
+    gender['Other'] = 0
+    gender['Unspecified'] = 0
     for course in courses:
         for user in UserProfile.objects.using(course).all():
             if user.gender in gender_map:
@@ -72,7 +76,17 @@ def student_ages(request, course_id='all'):
             return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
         courses.append(course['id'])
 
-    age = {}
+    age = OrderedDict()
+    age["Less than 12"] = 0
+    age["12-15"] = 0
+    age["16-18"] = 0
+    age["19-22"] = 0
+    age["23-25"] = 0
+    age["26-30"] = 0
+    age["31-40"] = 0
+    age["31-40"] = 0
+    age["41-50"] = 0
+    age["Over 50"] = 0
     for course in courses:
         for user in UserProfile.objects.using(course).all():
             if user.year_of_birth == 'NULL':
@@ -185,7 +199,16 @@ def student_educations(request, course_id='all'):
         'p_se': 'Doctorate',
         'p_oth': 'Doctorate'
     }
-    education = {}
+    education = OrderedDict()
+    education['Primary school'] = 0
+    education['Middle school'] = 0
+    education['Secondary school'] = 0
+    education['Associate'] = 0
+    education['Bachelor'] = 0
+    education['Masters'] = 0
+    education['Doctorate'] = 0
+    education['Other'] = 0
+
     for course in courses:
         for user in UserProfile.objects.using(course).all():
             if user.level_of_education in education_map and user.level_of_education != '':
