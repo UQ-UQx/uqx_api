@@ -111,6 +111,51 @@ def student_ages(request, course_id='all'):
 
 @api_view(['GET'])
 @permission_classes((AllowAny, ))
+def student_fullages(request, course_id='all'):
+    """
+    Lists all ages for the enrolled students
+    """
+    max_age = 100
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+    courses = []
+    if course_id is 'all':
+        courselist = api.views.get_all_courses()
+        for course in courselist:
+            courses.append(courselist[course]['id'])
+        pass
+    else:
+        course = api.views.get_course(course_id)
+        if course is None:
+            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+        courses.append(course['id'])
+
+    age = OrderedDict()
+    for i in range(0, max_age):
+        age[str(i)] = 0
+    for course in courses:
+        pass
+        for user in UserProfile.objects.using(course).all():
+            if user.year_of_birth == 'NULL':
+                user.year_of_birth = "Unknown"
+            else:
+                theage = 0
+                try:
+                    theage = (2014 - int(user.year_of_birth))
+                    if theage <= max_age:
+                        theage = str(theage)
+                        if theage not in age:
+                            age[theage] = 0
+                        age[theage] += 1
+                except ValueError:
+                    logger.error("Age is not a year")
+
+    data = age
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_educations(request, course_id='all'):
     """
     Lists all prior education levels for the enrolled students

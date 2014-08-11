@@ -50,6 +50,7 @@ def endpoints():
 
     points['student_genders'] = {'path': 'students/genders', 'option': 'course_id'}
     points['student_ages'] = {'path': 'students/ages', 'option': 'course_id'}
+    points['student_fullages'] = {'path': 'students/fullages', 'option': 'course_id'}
     points['student_educations'] = {'path': 'students/educations', 'option': 'course_id'}
     points['student_countries'] = {'path': 'students/countries', 'option': 'course_id'}
     points['student_modes'] = {'path': 'students/modes', 'option': 'course_id'}
