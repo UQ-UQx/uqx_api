@@ -108,6 +108,58 @@ class UserProfile(models.Model):
         db_table = 'auth_userprofile'
 
 
+class PersonCourse(models.Model):
+    course_id = models.CharField(max_length=255)
+    user_id = models.CharField(max_length=255)
+    registered = models.IntegerField()
+    viewed = models.IntegerField()
+    explored = models.IntegerField()
+    certified = models.IntegerField()
+    final_cc_cname = models.CharField(max_length=255)
+    LoE = models.CharField(max_length=255)
+    YoB = models.DateField()
+    gender = models.CharField(max_length=255)
+    grade = models.FloatField()
+    start_time = models.DateField()
+    last_event = models.DateField()
+    nevents = models.IntegerField()
+    ndays_act = models.IntegerField()
+    nplay_video = models.IntegerField()
+    nchapters = models.IntegerField()
+    nforum_posts = models.IntegerField()
+    roles = models.CharField(max_length=255)
+    attempted_problems = models.IntegerField()
+    inconsistent_flag = models.IntegerField()
+
+    def to_dict(self):
+        return {
+            'course_id': self.course_id,
+            'user_id': self.user_id,
+            'registered': self.registered,
+            'viewed': self.viewed,
+            'explored': self.explored,
+            'certified': self.certified,
+            'final_cc_cname': self.final_cc_cname,
+            'LoE': self.LoE,
+            'YoB': self.YoB,
+            'gender': self.gender,
+            'grade': self.grade,
+            'start_time': self.start_time,
+            'last_event': self.last_event,
+            'nevents': self.nevents,
+            'ndays_act': self.ndays_act,
+            'nplay_video': self.nplay_video,
+            'nchapters': self.nchapters,
+            'nforum_posts': self.nforum_posts,
+            'roles': self.roles,
+            'attempted_problems': self.attempted_problems,
+            'inconsistent_flag': self.inconsistent_flag,
+        }
+
+    class Meta:
+        db_table = 'personcourse'
+
+
 class UserEnrol(models.Model):
     user_id = models.CharField(max_length=255)
     course_id = models.CharField(max_length=255)

@@ -3,7 +3,7 @@ import urllib2
 import api.views
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from api.models import UserProfile, UserEnrol, Log, StudentModule
+from api.models import UserProfile, UserEnrol, Log, StudentModule, PersonCourse
 from collections import OrderedDict
 import datetime
 from rest_framework.permissions import AllowAny
@@ -362,7 +362,7 @@ def student_active(request, course_id='all'):
         for week in activeusersweekly:
             theyear = week['_id'][0:4]
             theweek = week['_id'][5:].zfill(2)
-            realdate = datetime.strptime(theyear+theweek+'1', '%Y%W%w')
+            realdate = datetime.datetime.strptime(theyear+theweek+'1', '%Y%W%w')
             thedate = realdate.strftime("%Y-%m-%d")
             if thedate not in data['weeks']:
                 dataweeks[thedate] = 0
@@ -462,4 +462,26 @@ def student_activity(request, course_id='all'):
         elcount += 1
     print "Finished elements"
     print "TIME DIFFERENCE "+str(datetime.datetime.now() - starttime)+" SECONDS"
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def student_personcourse(request, course_id='all'):
+    """
+    Lists all genders for the enrolled students
+    """
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+    courses = []
+    course = api.views.get_course(course_id)
+    if course is None:
+        return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+    courses.append(course['mongoname'])
+    data = []
+    for course in courses:
+        print course
+        for table_user in PersonCourse.objects.using("personcourse").filter(course_id=course):
+            print table_user
+            data.append(table_user.to_dict())
+            pass
     return api.views.api_render(request, data, status.HTTP_200_OK)
