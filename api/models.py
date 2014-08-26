@@ -58,7 +58,9 @@ class Log(Document):
 
     @staticmethod
     def countcountryenrolments(collectionname, course_id):
-        #DO  db.clickstream.ensureIndex( {event_type: 1,"context.course_id": 1} )
+        #DO db.clickstream.ensureIndex({country:1})
+        #DO db.clickstream.ensureIndex( {event_type: 1,"context.course_id": 1} )
+        #DO db.clickstream.ensureIndex({"context.course_id": 1})
         #db.clickstream_tmp.aggregate(    [      { $match : {'context.course_id':'UQx/Think101x/1T2014','event_type':'edx.course.enrollment.activated'} },      { $group : { _id : "$country", thecount: { $sum: 1 } } }    ] )
         results = _get_db()[collectionname].aggregate([ {"$match":{'context.course_id':course_id,
                                                                    'event_type':'edx.course.enrollment.activated'}},{"$group":{"_id": "$country", "thecount": { "$sum": 1 } }} ])

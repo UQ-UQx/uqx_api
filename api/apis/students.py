@@ -362,7 +362,7 @@ def student_active(request, course_id='all'):
         for week in activeusersweekly:
             theyear = week['_id'][0:4]
             theweek = week['_id'][5:].zfill(2)
-            realdate = datetime.datetime.strptime(theyear+theweek+'1', '%Y%W%w')
+            realdate = datetime.strptime(theyear+theweek+'1', '%Y%W%w')
             thedate = realdate.strftime("%Y-%m-%d")
             if thedate not in data['weeks']:
                 dataweeks[thedate] = 0
