@@ -470,18 +470,26 @@ def student_personcourse(request, course_id='all'):
     """
     Lists all genders for the enrolled students
     """
-    if api.views.is_cached(request):
-        return api.views.api_cacherender(request)
+    #Disable cache for the time being
+    #if api.views.is_cached(request):
+    #    return api.views.api_cacherender(request)
+    fields = None
+    if 'fields' in request.GET:
+        fields = request.GET['fields'].split(',')
     courses = []
-    course = api.views.get_course(course_id)
-    if course is None:
-        return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
-    courses.append(course['mongoname'])
+    if course_id is 'all':
+        courselist = api.views.get_all_courses()
+        for course in courselist:
+            if 'mongoname' in courselist[course]:
+                courses.append(courselist[course]['mongoname'])
+        pass
+    else:
+        course = api.views.get_course(course_id)
+        if course is None:
+            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+        courses.append(course['mongoname'])
     data = []
     for course in courses:
-        print course
         for table_user in PersonCourse.objects.using("personcourse").filter(course_id=course):
-            print table_user
-            data.append(table_user.to_dict())
-            pass
+            data.append(table_user.to_dict(fields))
     return api.views.api_render(request, data, status.HTTP_200_OK)

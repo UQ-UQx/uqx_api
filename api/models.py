@@ -131,30 +131,37 @@ class PersonCourse(models.Model):
     attempted_problems = models.IntegerField()
     inconsistent_flag = models.IntegerField()
 
-    def to_dict(self):
-        return {
-            'course_id': self.course_id,
-            'user_id': self.user_id,
-            'registered': self.registered,
-            'viewed': self.viewed,
-            'explored': self.explored,
-            'certified': self.certified,
-            'final_cc_cname': self.final_cc_cname,
-            'LoE': self.LoE,
-            'YoB': self.YoB,
-            'gender': self.gender,
-            'grade': self.grade,
-            'start_time': self.start_time,
-            'last_event': self.last_event,
-            'nevents': self.nevents,
-            'ndays_act': self.ndays_act,
-            'nplay_video': self.nplay_video,
-            'nchapters': self.nchapters,
-            'nforum_posts': self.nforum_posts,
-            'roles': self.roles,
-            'attempted_problems': self.attempted_problems,
-            'inconsistent_flag': self.inconsistent_flag,
-        }
+    def to_dict(self, fields):
+        if fields is None:
+            return {
+                'course_id': self.course_id,
+                'user_id': self.user_id,
+                'registered': self.registered,
+                'viewed': self.viewed,
+                'explored': self.explored,
+                'certified': self.certified,
+                'final_cc_cname': self.final_cc_cname,
+                'LoE': self.LoE,
+                'YoB': self.YoB,
+                'gender': self.gender,
+                'grade': self.grade,
+                'start_time': self.start_time,
+                'last_event': self.last_event,
+                'nevents': self.nevents,
+                'ndays_act': self.ndays_act,
+                'nplay_video': self.nplay_video,
+                'nchapters': self.nchapters,
+                'nforum_posts': self.nforum_posts,
+                'roles': self.roles,
+                'attempted_problems': self.attempted_problems,
+                'inconsistent_flag': self.inconsistent_flag,
+            }
+        else:
+            sub_dict = {}
+            for field in fields:
+                if hasattr(self, field):
+                    sub_dict[field] = getattr(self, field)
+            return sub_dict
 
     class Meta:
         db_table = 'personcourse'
