@@ -25,7 +25,7 @@ def meta_courses(request):
         return api.views.api_cacherender(request)
     courses = []
     for db in uqx_api.courses.EDX_DATABASES:
-        if db == 'default':
+        if db == 'default' or db == 'personcourse':
             continue
 
         course = OrderedDict()
