@@ -353,15 +353,11 @@ def student_active(request, course_id='all'):
     data['weeks'] = OrderedDict()
     for course_id in courses:
         course = api.views.get_course(course_id)
-        print "E"+time.strftime("%H:%M:%S")
         activeusers = Log.activeusersdaily('clickstream', course['mongoname'])
-        print "F"+time.strftime("%H:%M:%S")
         for day in activeusers:
             if day['_id'] not in data['days']:
                 datadays[day['_id']] = 0
             datadays[day['_id']] += day['userCount']
-
-        print "G"+time.strftime("%H:%M:%S")
 
         activeusersweekly = Log.activeusersweekly('clickstream', course['mongoname'])
         for week in activeusersweekly:
@@ -373,15 +369,11 @@ def student_active(request, course_id='all'):
                 dataweeks[thedate] = 0
             dataweeks[thedate] += week['userCount']
 
-        print "H"+time.strftime("%H:%M:%S")
-
     for key in sorted(datadays.iterkeys()):
         data['days'][key] = datadays[key]
 
     for key in sorted(dataweeks.iterkeys()):
         data['weeks'][key] = dataweeks[key]
-
-    print "I"+time.strftime("%H:%M:%S")
 
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
