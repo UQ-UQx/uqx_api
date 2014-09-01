@@ -134,6 +134,7 @@ def get_course(course_id):
 def get_all_courses():
     courses = dict(uqx_api.courses.EDX_DATABASES)
     del courses['default']
+    del courses['personcourse']
     return courses
 
 
