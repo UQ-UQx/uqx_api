@@ -172,7 +172,7 @@ class PersonCourse(models.Model):
 class UserEnrol(models.Model):
     user_id = models.CharField(max_length=255)
     course_id = models.CharField(max_length=255)
-    created = models.CharField(max_length=255)
+    created = models.DateTimeField()
     is_active = models.CharField(max_length=255)
     mode = models.CharField(max_length=255)
 

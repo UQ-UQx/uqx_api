@@ -78,7 +78,7 @@ def meta_courseinfo(request):
         within_per_day = 0
         first_date = datetime.datetime.now()
         for user in UserEnrol.objects.using(db).all():
-            userdate = dateutil.parser.parse(user.created)
+            userdate = user.created.replace(tzinfo=None)
             if first_date > userdate:
                 first_date = userdate
             if userdate < max_per_day_date:

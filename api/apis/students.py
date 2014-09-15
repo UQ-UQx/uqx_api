@@ -309,7 +309,7 @@ def student_dates(request, course_id='all'):
     data = OrderedDict()
     for course in courses:
         for user in UserEnrol.objects.using(course).all():
-            thedate = user.created[:10]
+            thedate = user.created.strftime('%Y-%m-%d')
             if thedate not in data:
                 data[thedate] = {'enrolled': 0, 'active': 0, 'aggregate_enrolled': 0, 'aggregate_active': 0}
             data[thedate]['enrolled'] += 1
