@@ -110,6 +110,40 @@ class UserProfile(models.Model):
         db_table = 'auth_userprofile'
 
 
+class CourseProfile(models.Model):
+
+
+    course = models.CharField(max_length=255)
+    dbname = models.CharField(max_length=255)
+    mongoname = models.CharField(max_length=255)
+    discussiontable = models.CharField(max_length=255)
+    registration_open_date = models.DateField()
+    course_launch_date = models.DateField()
+    course_close_date = models.DateField()
+    nregistered_students = models.IntegerField()
+    nviewed_students = models.IntegerField()
+    nexplored_students = models.IntegerField()
+    ncertified_students = models.IntegerField()
+    nhonor_students = models.IntegerField()
+    naudit_students = models.IntegerField()
+    nvertified_students = models.IntegerField()
+    course_effort = models.FloatField()
+    course_length = models.IntegerField()
+    nchapters = models.IntegerField()
+    nvideos = models.IntegerField()
+    nhtmls = models.IntegerField()
+    nassessments = models.IntegerField()
+    nsummative_assessments = models.IntegerField()
+    nformative_assessments = models.IntegerField()
+    nincontent_discussions = models.IntegerField()
+    nactivities = models.IntegerField()
+    best_assessment = models.CharField(max_length=255)
+    worst_assessment = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'courseprofile'
+
+
 class PersonCourse(models.Model):
     course_id = models.CharField(max_length=255)
     user_id = models.CharField(max_length=255)
