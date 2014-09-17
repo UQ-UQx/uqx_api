@@ -75,6 +75,7 @@ def endpoints():
     points['meta_structure'] = {'path': 'meta/structure', 'option': 'course_id', 'requirevar': True}
     points['meta_countries'] = {'path': 'meta/countries'}
     points['meta_modes'] = {'path': 'meta/modes'}
+    points['meta_courseprofile'] = {'path': 'meta/courseprofile', 'option': 'course_id'}
 
     points['videos_views'] = {'path': 'videos/views', 'option': 'course_id', 'requirevar': True}
     logger.info("Getting endpoints")

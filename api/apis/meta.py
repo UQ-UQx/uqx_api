@@ -7,7 +7,7 @@ import pycountry
 import urllib2
 import json
 import datetime
-from api.models import UserEnrol
+from api.models import UserEnrol, CourseProfile
 import dateutil
 from rest_framework.permissions import AllowAny
 
@@ -173,4 +173,36 @@ def meta_structure(request, course_id=''):
     except:
         return api.views.api_render(request, {'error': 'Could not find course file'}, status.HTTP_404_NOT_FOUND)
     data = json.loads(data)
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def meta_courseprofile(request, course_id='all'):
+    """
+    Returns derived course profiles for a course
+    """
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+    courses = []
+    if course_id is 'all':
+        courselist = api.views.get_all_courses()
+        for course in courselist:
+            courses.append(courselist[course]['id'])
+        pass
+    else:
+        course = api.views.get_course(course_id)
+        if course is None:
+            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+        courses.append(course['id'])
+
+    data = {}
+
+    for course in courses:
+        data[course] = {}
+        course_data = CourseProfile.objects.using("personcourse").filter(course=course)
+        if len(course_data) > 0:
+            data[course] = course_data[0].to_dict(None)
+            data[course]['status'] = 'available'
+        else:
+            data[course]['status'] = 'unavailable'
+
     return api.views.api_render(request, data, status.HTTP_200_OK)

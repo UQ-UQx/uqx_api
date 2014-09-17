@@ -481,8 +481,7 @@ def student_personcourse(request, course_id='all'):
         return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
     courses.append(course['dbname'])
     data = []
-    for course in courses:
-        PersonCourse._meta.db_table = 'personcourse_'+course_id
-        for table_user in PersonCourse.objects.using("personcourse").all():
-            data.append(table_user.to_dict(fields))
+    PersonCourse._meta.db_table = 'personcourse_'+course_id
+    for table_user in PersonCourse.objects.using("personcourse").all():
+        data.append(table_user.to_dict(fields))
     return api.views.api_render(request, data, status.HTTP_200_OK)

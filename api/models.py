@@ -143,6 +143,38 @@ class CourseProfile(models.Model):
     class Meta:
         db_table = 'courseprofile'
 
+    def to_dict(self, fields):
+        if fields is None:
+            pass
+        return {
+            'course': self.course,
+            'dbname': self.dbname,
+            'mongoname': self.mongoname,
+            'discussiontable': self.discussiontable,
+            'registration_open_date': self.registration_open_date,
+            'course_launch_date': self.course_launch_date,
+            'course_close_date': self.course_close_date,
+            'nregistered_students': self.nregistered_students,
+            'nviewed_students': self.nviewed_students,
+            'nexplored_students': self.nexplored_students,
+            'ncertified_students': self.ncertified_students,
+            'nhonor_students': self.nhonor_students,
+            'naudit_students': self.naudit_students,
+            'nvertified_students': self.nvertified_students,
+            'course_effort': self.course_effort,
+            'course_length': self.course_length,
+            'nchapters': self.nchapters,
+            'nvideos': self.nvideos,
+            'nhtmls': self.nhtmls,
+            'nassessments': self.nassessments,
+            'nsummative_assessments': self.nsummative_assessments,
+            'nformative_assessments': self.nformative_assessments,
+            'nincontent_discussions': self.nincontent_discussions,
+            'nactivities': self.nactivities,
+            'best_assessment': self.best_assessment,
+            'worst_assessment': self.worst_assessment,
+        }
+
 
 class PersonCourse(models.Model):
     course_id = models.CharField(max_length=255)
