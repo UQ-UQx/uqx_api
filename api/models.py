@@ -89,7 +89,7 @@ class Log(Document):
 
     @staticmethod
     def activeusersweekly(collectionname, course_id):
-        results = _get_db()[collectionname].aggregate([ {"$match":{'context.course_id':course_id}},{"$group":{"_id": {"$concat":[  {"$substr":[{"$year":['$time_date']},0,4]} ,"_",{"$substr":[{"$week":['$time_date']},0,2]}]}, "users":{"$addToSet":"$username"} }}, {"$unwind":"$users"}, {"$group":{"_id":"$_id","userCount":{"$sum":1}}} ])
+        results = _get_db()[collectionname].aggregate([ {"$match":{'context.course_id':course_id, "time_date": {"$exists": True}}},{"$group":{"_id": {"$concat":[  {"$substr":[{"$year":['$time_date']},0,4]} ,"_",{"$substr":[{"$week":['$time_date']},0,2]}]}, "users":{"$addToSet":"$username"} }}, {"$unwind":"$users"}, {"$group":{"_id":"$_id","userCount":{"$sum":1}}} ])
         results = results['result']
         return results
 
@@ -244,6 +244,24 @@ class UserEnrol(models.Model):
 
     class Meta:
         db_table = 'student_courseenrollment'
+
+
+class UserCertificate(models.Model):
+    user_id = models.CharField(max_length=255)
+    download_url = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    grade = models.CharField(max_length=255)
+    course_id = models.CharField(max_length=255)
+    distinction = models.CharField(max_length=255)
+    status = models.CharField(max_length=255)
+
+    created_date = models.DateTimeField()
+    modified_date = models.DateTimeField()
+    mode = models.CharField(max_length=255)
+
+
+    class Meta:
+        db_table = 'certificates_generatedcertificate'
 
 
 class StudentModule(models.Model):

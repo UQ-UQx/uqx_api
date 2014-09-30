@@ -7,7 +7,7 @@ import pycountry
 import urllib2
 import json
 import datetime
-from api.models import UserEnrol, CourseProfile
+from api.models import UserEnrol, CourseProfile, UserCertificate
 import dateutil
 from rest_framework.permissions import AllowAny
 
@@ -76,6 +76,7 @@ def meta_courseinfo(request):
         max_per_day_date = max_per_day_date.replace(tzinfo=None)
         total = 0
         within_per_day = 0
+        certificates = 0
         first_date = datetime.datetime.now()
         for user in UserEnrol.objects.using(db).all():
             userdate = user.created.replace(tzinfo=None)
@@ -84,12 +85,17 @@ def meta_courseinfo(request):
             if userdate < max_per_day_date:
                 within_per_day += 1
             total += 1
+            certificates += 1
+
+        certificates = len(UserCertificate.objects.using(db).filter(status='downloadable'))
+
         range = (max_per_day_date - first_date).days
 
         per_day = round(within_per_day/range,2)
 
         course['enrolments'] = total
         course['enrolments_per_day'] = per_day
+        course['certificates'] = certificates
         courses.append(course)
     data = courses
     return api.views.api_render(request, data, status.HTTP_200_OK)
