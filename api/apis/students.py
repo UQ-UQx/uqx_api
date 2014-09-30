@@ -333,8 +333,8 @@ def student_dates(request, course_id='all'):
 
 @api_view(['GET'])
 def student_active(request, course_id='all'):
-    #if api.views.is_cached(request):
-    #    return api.views.api_cacherender(request)
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
     courses = []
     if course_id is 'all':
         courselist = api.views.get_all_courses()
