@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 import courses
 import datetime
+import ldap
+from django_auth_ldap.config import LDAPSearch
 
 try:
     import config
@@ -53,6 +55,24 @@ INSTALLED_APPS = (
     'rest_framework',
     'corsheaders',
 )
+
+if config.USE_LDAP:
+
+    AUTHENTICATION_BACKENDS = (
+        'django_auth_ldap.backend.LDAPBackend',
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
+    AUTH_LDAP_SERVER_URI = config.LDAP_SERVER
+    AUTH_LDAP_BIND_DN = config.LDAP_BIND_DN
+    AUTH_LDAP_BIND_PASSWORD = config.LDAP_PASSWORD
+
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(config.LDAP_SEARCH_DN, 2, "(uid=%(user)s)")
+    AUTH_LDAP_USER_ATTR_MAP = {
+        "first_name": "cn",
+        "last_name": "cn",
+        "email": "mail"
+    }
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

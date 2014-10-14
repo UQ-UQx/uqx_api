@@ -10,3 +10,9 @@ YOUTUBE_CLIENT_SECRET = ''
 FAB_HOSTS = []
 FAB_GITHUB_URL = 'https://github.com/UQ-UQx/uqx_api.git'
 FAB_REMOTE_PATH = '/file/to/your/deployment/location'
+#LDAP - Configuration
+USE_LDAP = False
+LDAP_SERVER = ""
+LDAP_BIND_DN = ""
+LDAP_PASSWORD = ""
+LDAP_SEARCH_DN = ""

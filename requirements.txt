@@ -24,3 +24,5 @@ djangorestframework-jwt==0.1.5
 google-api-python-client
 httplib2
 python-gflags
+django-auth-ldap
+python-ldap
