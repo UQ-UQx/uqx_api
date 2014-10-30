@@ -7,9 +7,10 @@ import pycountry
 import urllib2
 import json
 import datetime
-from api.models import UserEnrol, CourseProfile, UserCertificate
+from api.models import UserEnrol, CourseProfile, UserCertificate, PersonCourse
 import dateutil
 from rest_framework.permissions import AllowAny
+
 
 # Logging
 import logging
@@ -210,5 +211,50 @@ def meta_courseprofile(request, course_id='all'):
             data[course]['status'] = 'available'
         else:
             data[course]['status'] = 'unavailable'
+
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def meta_enrolcount(request, course_id='all'):
+    """
+    Returns the enrolment count over the last week
+    """
+    #if api.views.is_cached(request):
+    #    return api.views.api_cacherender(request)
+    data = OrderedDict()
+
+    courses = []
+    if course_id is 'all':
+        courselist = api.views.get_all_courses()
+        for course in courselist:
+            courses.append(courselist[course]['id'])
+        pass
+    else:
+        course = api.views.get_course(course_id)
+        if course is None:
+            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+        courses.append(course_id)
+
+    day_students = 0
+    week_students = 0
+    month_students = 0
+
+    for course in courses:
+        month_ago = datetime.date.today() + datetime.timedelta(-30)
+        week_ago = datetime.date.today() + datetime.timedelta(-7)
+        day_ago = datetime.date.today() + datetime.timedelta(-1)
+
+        PersonCourse._meta.db_table = 'personcourse_'+course
+        for table_user in PersonCourse.objects.using("personcourse").all():
+            if table_user.start_time > month_ago:
+                month_students += 1
+                if table_user.start_time > week_ago:
+                    week_students += 1
+                    if table_user.start_time > day_ago:
+                        day_students += 1
+
+    data['last_week'] = str(week_students)
+    data['last_month'] = str(month_students)
+    data['last_day'] = str(day_students)
 
     return api.views.api_render(request, data, status.HTTP_200_OK)
