@@ -219,8 +219,8 @@ def meta_enrolcount(request, course_id='all'):
     """
     Returns the enrolment count over the last week
     """
-    #if api.views.is_cached(request):
-    #    return api.views.api_cacherender(request)
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
     data = OrderedDict()
 
     courses = []
