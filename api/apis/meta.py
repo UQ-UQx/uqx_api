@@ -239,22 +239,28 @@ def meta_enrolcount(request, course_id='all'):
     week_students = 0
     month_students = 0
 
-    ingests = get_latest_ingest_dates()
-    last_date = datetime.datetime.strptime(ingests['data_date'], "%Y-%m-%d").date()
-
     for course in courses:
-        month_ago = last_date + datetime.timedelta(-30)
-        week_ago = last_date + datetime.timedelta(-7)
-        day_ago = last_date + datetime.timedelta(-1)
 
+        last_date = None
         PersonCourse._meta.db_table = 'personcourse_'+course
         for table_user in PersonCourse.objects.using("personcourse").all():
-            if table_user.start_time > month_ago:
-                month_students += 1
-                if table_user.start_time > week_ago:
-                    week_students += 1
-                    if table_user.start_time > day_ago:
-                        day_students += 1
+            if last_date is None or table_user.start_time > last_date:
+                last_date = table_user.start_time
+
+        if last_date is not None:
+
+            month_ago = last_date + datetime.timedelta(-30)
+            week_ago = last_date + datetime.timedelta(-7)
+            day_ago = last_date + datetime.timedelta(-1)
+
+            PersonCourse._meta.db_table = 'personcourse_'+course
+            for table_user in PersonCourse.objects.using("personcourse").all():
+                if table_user.start_time > month_ago:
+                    month_students += 1
+                    if table_user.start_time > week_ago:
+                        week_students += 1
+                        if table_user.start_time > day_ago:
+                            day_students += 1
 
     data['last_week'] = str(week_students)
     data['last_month'] = str(month_students)
