@@ -7,7 +7,7 @@ import pycountry
 import urllib2
 import json
 import datetime
-from api.models import UserEnrol, CourseProfile, UserCertificate, PersonCourse
+from api.models import UserEnrol, CourseProfile, UserCertificate, PersonCourse, Ingestor
 import dateutil
 from rest_framework.permissions import AllowAny
 
@@ -239,10 +239,13 @@ def meta_enrolcount(request, course_id='all'):
     week_students = 0
     month_students = 0
 
+    ingests = get_latest_ingest_dates()
+    last_date = datetime.datetime.strptime(ingests['data_date'], "%Y-%m-%d").date()
+
     for course in courses:
-        month_ago = datetime.date.today() + datetime.timedelta(-30)
-        week_ago = datetime.date.today() + datetime.timedelta(-7)
-        day_ago = datetime.date.today() + datetime.timedelta(-1)
+        month_ago = last_date + datetime.timedelta(-30)
+        week_ago = last_date + datetime.timedelta(-7)
+        day_ago = last_date + datetime.timedelta(-1)
 
         PersonCourse._meta.db_table = 'personcourse_'+course
         for table_user in PersonCourse.objects.using("personcourse").all():
@@ -258,3 +261,32 @@ def meta_enrolcount(request, course_id='all'):
     data['last_day'] = str(day_students)
 
     return api.views.api_render(request, data, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def meta_lastingest(request):
+    """
+    Returns the last time the ingested data was run, and the latest date that the ingestion data was supplied
+    """
+    ingests = get_latest_ingest_dates()
+
+    return api.views.api_render(request, ingests, status.HTTP_200_OK)
+
+def get_latest_ingest_dates():
+    last_ingested_item = None
+    last_clicksteam_item_date = None
+    for ingest in Ingestor.objects.using("default").all():
+        #if ingest.completed_date:
+        if ingest.completed == 1 and ingest.completed_date:
+            if last_ingested_item is None or ingest.completed_date > last_ingested_item.completed_date:
+                last_ingested_item = ingest
+            if ingest.service_name == 'Clickstream':
+                click_date = str(ingest.meta).split('/')
+                click_date = click_date[-1].split('_')
+                click_date = datetime.datetime.strptime(click_date[0], "%Y-%m-%d")
+                if last_clicksteam_item_date is None or click_date > last_clicksteam_item_date:
+                    last_clicksteam_item_date = click_date
+
+    data = OrderedDict()
+    data['ingest_date'] = datetime.datetime.strftime(last_ingested_item.completed_date, "%Y-%m-%d")
+    data['data_date'] = datetime.datetime.strftime(last_clicksteam_item_date, "%Y-%m-%d")
+    return data

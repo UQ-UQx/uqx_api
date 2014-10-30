@@ -274,6 +274,19 @@ class StudentModule(models.Model):
         db_table = 'courseware_studentmodule'
 
 
+class Ingestor(models.Model):
+    service_name = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)
+    meta = models.CharField(max_length=255)
+    started = models.IntegerField()
+    completed = models.IntegerField()
+    started_date = models.DateField()
+    completed_date = models.DateField()
+
+    class Meta:
+        db_table = 'ingestor'
+
+
 class DiscussionForum(object):
     mongo_client = None
 
