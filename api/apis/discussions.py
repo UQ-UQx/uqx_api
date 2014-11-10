@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from api.models import DiscussionForum
 from datetime import date, datetime, timedelta
+import config
 
 # Logging
 import logging
@@ -202,7 +203,7 @@ def discussion_category(request, course_id):
 
 
 def loadcourseinfo(json_file):
-    courseurl = 'https://tools.ceit.uq.edu.au/datasources/course_structure/'+json_file
+    courseurl = config.SERVER_URL + '/datasources/course_structure/'+json_file
     courseinfofile = urllib2.urlopen(courseurl)
     if courseinfofile:
         courseinfo = json.load(courseinfofile)

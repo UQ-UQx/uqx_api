@@ -10,6 +10,7 @@ from rest_framework.permissions import AllowAny
 import random
 import dateutil
 import time
+import config
 
 # Logging
 import logging
@@ -390,7 +391,7 @@ def student_activity(request, course_id='all'):
 
     #Course Structure Read
     filename = course['dbname'].replace("_", "-")
-    courseurl = 'https://tools.ceit.uq.edu.au/datasources/course_structure/'+filename+'.json'
+    courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
     validelements = []
     structure = {}
     try:
