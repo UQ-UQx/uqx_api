@@ -10,7 +10,7 @@ import datetime
 from api.models import UserEnrol, CourseProfile, UserCertificate, PersonCourse, Ingestor
 import dateutil
 from rest_framework.permissions import AllowAny
-
+import config
 
 # Logging
 import logging
@@ -173,7 +173,7 @@ def meta_structure(request, course_id=''):
         return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
 
     filename = course['dbname'].replace("_", "-")
-    courseurl = 'http://dashboard.ceit.uq.edu.au/datasources/course_structure/'+filename+'.json';
+    courseurl = 'http://' + config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
     data = '[]'
     try:
         data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')

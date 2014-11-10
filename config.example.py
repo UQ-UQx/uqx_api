@@ -16,3 +16,5 @@ LDAP_SERVER = ""
 LDAP_BIND_DN = ""
 LDAP_PASSWORD = ""
 LDAP_SEARCH_DN = ""
+#The server where the course information is found
+SERVER_URL = 'http://dashboard.ceit.uq.edu.au'
