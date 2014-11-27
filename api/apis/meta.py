@@ -215,6 +215,7 @@ def meta_courseprofile(request, course_id='all'):
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_enrolcount(request, course_id='all'):
     """
     Returns the enrolment count over the last week
