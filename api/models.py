@@ -187,6 +187,7 @@ class PersonCourse(models.Model):
     LoE = models.CharField(max_length=255)
     YoB = models.DateField()
     gender = models.CharField(max_length=255)
+    mode = models.CharField(max_length=255)
     grade = models.FloatField()
     start_time = models.DateField()
     last_event = models.DateField()
@@ -212,6 +213,7 @@ class PersonCourse(models.Model):
                 'LoE': self.LoE,
                 'YoB': self.YoB,
                 'gender': self.gender,
+                'mode': self.mode,
                 'grade': self.grade,
                 'start_time': self.start_time,
                 'last_event': self.last_event,
