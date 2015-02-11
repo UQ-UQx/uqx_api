@@ -40,7 +40,7 @@ vim [BASE_PATH]/uqx_api/courses.py
 Create the api database in your MySQL installation
 ```bash
 mysql -u root -p
-MAKE API DATABASE > mysql > CREATE DATABASE api;
+CREATE DATABASE api;
 ```
 Configure your web server to run the application, see http://uwsgi-docs.readthedocs.org/en/latest/tutorials/Django_and_nginx.html for more details.
 A preconfigured uwSGI configuration can be found in the wsgi directory, you can use this with nginx by:
