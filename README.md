@@ -37,7 +37,7 @@ Set the courses to provide an API for
 ```bash
 vim [BASE_PATH]/uqx_api/courses.py
 ```
-Create the api database in your MySQL installation
+Create the api database in your MySQL installation (if not already created by optimus_ingestor).
 ```bash
 mysql -u root -p
 CREATE DATABASE api;
