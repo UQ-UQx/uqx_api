@@ -153,7 +153,13 @@ def cache_get(path):
 
 
 def cache_path(request):
-    return str(fixpath(request.path))
+    get = ""
+    for param in request.GET:
+        if param != 'refreshcache':
+            get += param+":"+request.GET[param]
+    if get != "":
+        get = "?"+get
+    return str(fixpath(request.path+get))
 
 
 def fixpath(path):

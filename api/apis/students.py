@@ -11,6 +11,7 @@ import random
 import dateutil
 import time
 import config
+import dateutil.parser
 
 # Logging
 import logging
@@ -42,7 +43,11 @@ def student_genders(request, course_id='all'):
     gender['Other'] = 0
     gender['Unspecified'] = 0
     for course in courses:
+        paced_students = None
+        if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
+            paced_students = get_paced_students(request, course)
         for user in UserProfile.objects.using(course).all():
+            #print user
             if user.gender in gender_map:
                 user.gender = gender_map[str(user.gender)]
             else:
@@ -53,7 +58,8 @@ def student_genders(request, course_id='all'):
                 user.gender = "Female"
             if user.gender == 'o':
                 user.gender = "Other"
-            gender[str(user.gender)] += 1
+            if not paced_students or user.user_id in paced_students:
+                gender[str(user.gender)] += 1
     data = gender
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
@@ -90,6 +96,9 @@ def student_ages(request, course_id='all'):
     age["41-50"] = 0
     age["Over 50"] = 0
     for course in courses:
+        paced_students = None
+        if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
+            paced_students = get_paced_students(request, course)
         for user in UserProfile.objects.using(course).all():
             if user.year_of_birth == 'NULL':
                 user.year_of_birth = "Unknown"
@@ -117,9 +126,10 @@ def student_ages(request, course_id='all'):
                     user.year_of_birth = "41-50"
                 else:
                     user.year_of_birth = "Over 50"
-            if user.year_of_birth not in age:
-                age[user.year_of_birth] = 0
-            age[user.year_of_birth] += 1
+            if not paced_students or user.user_id in paced_students:
+                if user.year_of_birth not in age:
+                    age[user.year_of_birth] = 0
+                age[user.year_of_birth] += 1
 
     data = age
     return api.views.api_render(request, data, status.HTTP_200_OK)
@@ -151,6 +161,9 @@ def student_fullages(request, course_id='all'):
         age[str(i)] = 0
     for course in courses:
         pass
+        paced_students = None
+        if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
+            paced_students = get_paced_students(request, course)
         for user in UserProfile.objects.using(course).all():
             if user.year_of_birth == 'NULL':
                 user.year_of_birth = "Unknown"
@@ -160,9 +173,10 @@ def student_fullages(request, course_id='all'):
                     theage = (2014 - int(user.year_of_birth))
                     if theage <= max_age:
                         theage = str(theage)
-                        if theage not in age:
-                            age[theage] = 0
-                        age[theage] += 1
+                        if not paced_students or user.user_id in paced_students:
+                            if theage not in age:
+                                age[theage] = 0
+                            age[theage] += 1
                 except ValueError:
                     logger.error("Age is not a year")
 
@@ -212,14 +226,18 @@ def student_educations(request, course_id='all'):
     education['Other'] = 0
 
     for course in courses:
+        paced_students = None
+        if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
+            paced_students = get_paced_students(request, course)
         for user in UserProfile.objects.using(course).all():
             if user.level_of_education in education_map and user.level_of_education != '':
                 user.level_of_education = education_map[user.level_of_education]
             else:
                 user.level_of_education = "Unspecified"
-            if user.level_of_education not in education:
-                education[user.level_of_education] = 0
-            education[user.level_of_education] += 1
+            if not paced_students or user.user_id in paced_students:
+                if user.level_of_education not in education:
+                    education[user.level_of_education] = 0
+                education[user.level_of_education] += 1
     data = education
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
@@ -247,11 +265,15 @@ def student_modes(request, course_id='all'):
     total = 0
 
     for course in courses:
+        paced_students = None
+        if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
+            paced_students = get_paced_students(request, course)
         for user in UserEnrol.objects.using(course).all():
-            if user.mode not in modes:
-                modes[user.mode] = 0
-            modes[user.mode] += 1
-            total += 1
+            if not paced_students or user.user_id in paced_students:
+                if user.mode not in modes:
+                    modes[user.mode] = 0
+                modes[user.mode] += 1
+                total += 1
 
     modes['total'] = total
     data = modes
@@ -483,6 +505,35 @@ def student_personcourse(request, course_id='all'):
     courses.append(course['dbname'])
     data = []
     PersonCourse._meta.db_table = 'personcourse_'+course_id
+    paced_students = None
+    if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
+        paced_students = get_paced_students(request, course_id)
     for table_user in PersonCourse.objects.using("personcourse").all():
-        data.append(table_user.to_dict(fields))
+        if not paced_students or table_user.user_id in paced_students:
+            data.append(table_user.to_dict(fields))
+    print "LENGTH IS"+str(len(data))
     return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+def get_paced_students(request, course):
+    thecourse = api.views.get_course(course)
+    students = []
+    filename = thecourse['dbname'].replace("_","-")
+    courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
+    print courseurl
+    end_date = ""
+    data = '[]'
+    try:
+        data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')
+    except:
+        return api.views.api_render(request, {'error': 'Could not load course data'}, status.HTTP_404_NOT_FOUND)
+    data = json.loads(data)
+    max_per_day_date = datetime.datetime.now()
+    if 'end' in data:
+        end_date = dateutil.parser.parse(data['end'])
+    if end_date != "":
+        enrol = UserEnrol.objects.using(course).all()
+        for student in enrol:
+            if student.created < end_date:
+                students.append(student.user_id)
+    return students

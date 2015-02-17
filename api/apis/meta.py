@@ -92,7 +92,7 @@ def meta_courseinfo(request):
 
         range = (max_per_day_date - first_date).days
 
-        per_day = round(within_per_day/range,2)
+        per_day = round(within_per_day/range, 2)
 
         course['enrolments'] = total
         course['enrolments_per_day'] = per_day
