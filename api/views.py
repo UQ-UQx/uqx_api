@@ -155,7 +155,7 @@ def cache_get(path):
 def cache_path(request):
     get = ""
     for param in request.GET:
-        if param != 'refreshcache':
+        if param != 'refreshcache' and param != 'format':
             get += param+":"+request.GET[param]
     if get != "":
         get = "?"+get
