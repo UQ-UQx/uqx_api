@@ -257,12 +257,13 @@ def meta_enrolcount(request, course_id='all'):
 
             PersonCourse._meta.db_table = 'personcourse_'+course
             for table_user in PersonCourse.objects.using("personcourse").all():
-                if table_user.start_time > month_ago:
-                    month_students += 1
-                    if table_user.start_time > week_ago:
-                        week_students += 1
-                        if table_user.start_time > day_ago:
-                            day_students += 1
+                if table_user.start_time is not None:
+                    if table_user.start_time > month_ago:
+                        month_students += 1
+                        if table_user.start_time > week_ago:
+                            week_students += 1
+                            if table_user.start_time > day_ago:
+                                day_students += 1
 
     data['last_week'] = str(week_students)
     data['last_month'] = str(month_students)
