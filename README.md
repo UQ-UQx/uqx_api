@@ -42,6 +42,11 @@ Create the api database in your MySQL installation (if not already created by op
 mysql -u root -p
 CREATE DATABASE api;
 ```
+Create one or more users which can authenticate (this uses Django's built in user authentication so you can also connect it via other means)
+```bash
+cd [BASE_PATH]
+python manage.py createsuperuser
+```
 Configure your web server to run the application, see http://uwsgi-docs.readthedocs.org/en/latest/tutorials/Django_and_nginx.html for more details.
 A preconfigured uwSGI configuration can be found in the wsgi directory, you can use this with nginx by:
 ```bash
