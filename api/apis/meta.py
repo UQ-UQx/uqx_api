@@ -33,6 +33,7 @@ def meta_courses(request):
         course['id'] = db
         course['name'] = str(db).replace('_', ' ')
         course['icon'] = uqx_api.courses.EDX_DATABASES[db]['icon']
+        course['year'] = uqx_api.courses.EDX_DATABASES[db]['year']
         courses.append(course)
     data = courses
     return api.views.api_render(request, data, status.HTTP_200_OK)
@@ -55,6 +56,7 @@ def meta_courseinfo(request):
         course['id'] = db
         course['name'] = str(db).replace('_', ' ')
         course['icon'] = uqx_api.courses.EDX_DATABASES[db]['icon']
+        course['year'] = uqx_api.courses.EDX_DATABASES[db]['year']
 
         coursedb = api.views.get_course(course['id'])
 
