@@ -319,16 +319,16 @@ def meta_ingeststatus(request):
                 'last_ingest_date': None,
                 'current_start': None
             }
-            if ingest.completed == 1 and ingest.completed_date:
-                ingestions[ingest.service_name]['completed'] += 1
-                if ingestions[ingest.service_name]['last_ingest_date'] is None or ingest.completed_date > ingestions[ingest.service_name]['last_ingest_date'].completed_date:
-                    ingestions[ingest.service_name]['last_ingest_date'] = ingest
-            else:
-                ingestions[ingest.service_name]['remaining'] += 1
-            if ingest.completed == 0 and ingest.started == 1:
-                ingestions[ingest.service_name]['current'] = ingest.meta
-                ingestions[ingest.service_name]['current_start'] = datetime.datetime.strftime(ingest.started_date, "%Y-%m-%d %H:%M:%S")
-            ingestions[ingest.service_name]['total'] += 1
+        if ingest.completed == 1 and ingest.completed_date:
+            ingestions[ingest.service_name]['completed'] += 1
+            if ingestions[ingest.service_name]['last_ingest_date'] is None or ingest.completed_date > ingestions[ingest.service_name]['last_ingest_date'].completed_date:
+                ingestions[ingest.service_name]['last_ingest_date'] = ingest
+        else:
+            ingestions[ingest.service_name]['remaining'] += 1
+        if ingest.completed == 0 and ingest.started == 1:
+            ingestions[ingest.service_name]['current'] = ingest.meta
+            ingestions[ingest.service_name]['current_start'] = datetime.datetime.strftime(ingest.started_date, "%Y-%m-%d %H:%M:%S")
+        ingestions[ingest.service_name]['total'] += 1
 
     for ingest in ingestions:
         if ingestions[ingest]['last_ingest_date'] is not None:
