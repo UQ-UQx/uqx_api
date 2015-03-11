@@ -301,3 +301,37 @@ def get_latest_ingest_dates():
     data['ingest_date'] = datetime.datetime.strftime(last_ingested_item.completed_date, "%Y-%m-%d")
     data['data_date'] = datetime.datetime.strftime(last_clicksteam_item_date, "%Y-%m-%d")
     return data
+
+@api_view(['GET'])
+def meta_ingeststatus(request):
+    """
+    Returns the current information on the ingestion process
+    """
+    ingestions = {}
+
+    for ingest in Ingestor.objects.using("default").all():
+        if ingest.service_name not in ingestions:
+            ingestions[ingest.service_name] = {
+                'total': 0,
+                'remaining': 0,
+                'current': '',
+                'completed': 0,
+                'last_ingest_date': None,
+                'current_start': None
+            }
+            if ingest.completed == 1 and ingest.completed_date:
+                ingestions[ingest.service_name]['completed'] += 1
+                if ingestions[ingest.service_name]['last_ingest_date'] is None or ingest.completed_date > ingestions[ingest.service_name]['last_ingest_date'].completed_date:
+                    ingestions[ingest.service_name]['last_ingest_date'] = ingest
+            else:
+                ingestions[ingest.service_name]['remaining'] += 1
+            if ingest.completed == 0 and ingest.started == 1:
+                ingestions[ingest.service_name]['current'] = ingest.meta
+                ingestions[ingest.service_name]['current_start'] = datetime.datetime.strftime(ingest.started_date, "%Y-%m-%d %H:%M:%S")
+            ingestions[ingest.service_name]['total'] += 1
+
+    for ingest in ingestions:
+        if ingestions[ingest]['last_ingest_date'] is not None:
+            ingestions[ingest]['last_ingest_date'] = datetime.datetime.strftime(ingestions[ingest]['last_ingest_date'].completed_date, "%Y-%m-%d %H:%M:%S")
+
+    return api.views.api_render(request, ingestions, status.HTTP_200_OK)
