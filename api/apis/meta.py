@@ -274,6 +274,7 @@ def meta_enrolcount(request, course_id='all'):
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_lastingest(request):
     """
     Returns the last time the ingested data was run, and the latest date that the ingestion data was supplied
@@ -303,6 +304,7 @@ def get_latest_ingest_dates():
     return data
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_ingeststatus(request):
     """
     Returns the current information on the ingestion process
