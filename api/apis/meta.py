@@ -327,7 +327,8 @@ def meta_ingeststatus(request):
             ingestions[ingest.service_name]['remaining'] += 1
         if ingest.completed == 0 and ingest.started == 1:
             ingestions[ingest.service_name]['current'] = ingest.meta
-            ingestions[ingest.service_name]['current_start'] = datetime.datetime.strftime(ingest.started_date, "%Y-%m-%d %H:%M:%S")
+            if ingest.started_date is not None:
+                ingestions[ingest.service_name]['current_start'] = datetime.datetime.strftime(ingest.started_date, "%Y-%m-%d %H:%M:%S")
         ingestions[ingest.service_name]['total'] += 1
 
     for ingest in ingestions:
