@@ -35,6 +35,7 @@ def meta_courses(request):
         course['icon'] = uqx_api.courses.EDX_DATABASES[db]['icon']
         course['year'] = uqx_api.courses.EDX_DATABASES[db]['year']
         courses.append(course)
+    courses = sorted(courses, key=lambda k: k['year'])
     data = courses
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
