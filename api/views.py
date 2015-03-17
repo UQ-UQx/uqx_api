@@ -63,7 +63,7 @@ def endpointlist(request, theformat=None):
         if 'requirevar' not in endpoint or 'requirevar' == False:
             endpointlist[endpoint['path']] = {
                 'url': reverse(endpoint_key, request=request, format=theformat),
-                'lastcache': cache_get_time(endpoint['path']),
+                'lastcache': cache_get_time("/api/"+endpoint['path']),
                 'status': 'refresh'
             }
         if "option" in endpoint:
@@ -72,7 +72,7 @@ def endpointlist(request, theformat=None):
                     optionname = course
                     endpointlist[endpoint['path']+"/"+optionname] = {
                         'url': reverse(endpoint_key+"_"+endpoint['option'], request=request, format=theformat, kwargs={endpoint['option']: ''+optionname}),
-                        'lastcache': cache_get_time(endpoint['path']+"/"+optionname),
+                        'lastcache': cache_get_time("/api/"+endpoint['path']+"/"+optionname),
                         'status': 'refresh'
                     }
             pass
@@ -190,6 +190,7 @@ def cache_get(path):
 
 
 def cache_get_time(path):
+    logger.info("Retrieving cache expiry time for path "+fixpath(path))
     if cache.get('expiry_'+fixpath(path)):
         return cache.get('expiry_'+fixpath(path))
     else:
