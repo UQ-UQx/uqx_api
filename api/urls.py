@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 
 import views
 
-urlpatterns = [url(r'^$', views.api_index, name='api_index'), url(r'^refresh_cache$', views.refresh_cache, name='refresh_cache')]
+urlpatterns = [url(r'^$', views.api_index, name='api_index'), url(r'^refresh_cache$', views.refresh_cache, name='refresh_cache'), url(r'^endpointlist', views.endpointlist, name='endpointlist')]
 
 endpoints = views.endpoints()
 

@@ -44,6 +44,41 @@ def api_index(request, theformat=None):
     return Response(endpointlist)
 
 
+@csrf_exempt
+@api_view(('GET',))
+@permission_classes((AllowAny, ))
+def endpointlist(request, theformat=None):
+    """
+    Lists the currently available API endpoints.
+    """
+    courses = []
+    for db in uqx_api.courses.EDX_DATABASES:
+        if db == 'default' or db == 'personcourse':
+            continue
+        courses.append(db)
+    endpointlist = OrderedDict()
+    the_endpoints = endpoints()
+    for endpoint_key in the_endpoints:
+        endpoint = the_endpoints[endpoint_key]
+        if 'requirevar' not in endpoint or 'requirevar' == False:
+            endpointlist[endpoint['path']] = {
+                'url': reverse(endpoint_key, request=request, format=theformat),
+                'lastcache': cache_get_time(endpoint['path']),
+                'status': 'refresh'
+            }
+        if "option" in endpoint:
+            if endpoint['option'] == 'course_id':
+                for course in courses:
+                    optionname = course
+                    endpointlist[endpoint['path']+"/"+optionname] = {
+                        'url': reverse(endpoint_key+"_"+endpoint['option'], request=request, format=theformat, kwargs={endpoint['option']: ''+optionname}),
+                        'lastcache': cache_get_time(endpoint['path']+"/"+optionname),
+                        'status': 'refresh'
+                    }
+            pass
+    return Response(endpointlist)
+
+
 # The list of endpoints available
 def endpoints():
     points = OrderedDict()
@@ -145,12 +180,20 @@ def get_all_courses():
 def cache_save(path, data):
     logger.info("Saving cache for path "+fixpath(path)+", times out in "+str(settings.CACHES['default']['TIMEOUT']))
     cache.set(fixpath(path), data, settings.CACHES['default']['TIMEOUT'])
+    cache.set('expiry_'+fixpath(path), datetime.now().strftime("%Y-%m-%d %H:%M:%S"), settings.CACHES['default']['TIMEOUT'])
     pass
 
 
 def cache_get(path):
     logger.info("Retrieving cache for path "+fixpath(path)+", times out in "+str(settings.CACHES['default']['TIMEOUT']))
     return cache.get(fixpath(path))
+
+
+def cache_get_time(path):
+    if cache.get('expiry_'+fixpath(path)):
+        return cache.get('expiry_'+fixpath(path))
+    else:
+        return ""
 
 
 def cache_path(request):
