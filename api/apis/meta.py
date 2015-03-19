@@ -251,10 +251,11 @@ def meta_enrolcount(request, course_id='all'):
 
         last_date = None
         PersonCourse._meta.db_table = 'personcourse_'+course
-        for table_user in PersonCourse.objects.using("personcourse").all():
-            if table_user.start_time is not None:
-                if last_date is None or table_user.start_time > last_date:
-                    last_date = table_user.start_time
+        if api.views.db_table_exists("personcourse",PersonCourse._meta.db_table):
+            for table_user in PersonCourse.objects.using("personcourse").all():
+                if table_user.start_time is not None:
+                    if last_date is None or table_user.start_time > last_date:
+                        last_date = table_user.start_time
 
         if last_date is not None:
 
