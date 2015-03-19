@@ -79,40 +79,46 @@ def discussion_dates(request, course_id):
         return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
     DiscussionForum.connect_to_mongo()
     group_by_date = DiscussionForum.group_by_date(course)
-    delta = group_by_date['max_date'] - group_by_date['min_date']
+    print "0"
 
     data = {}
-    data['min_date'] = str(group_by_date['min_date'])
-    data['max_date'] = str(group_by_date['max_date'])
+    data['min_date'] = ''
+    data['max_date'] = ''
     data['comment_datecounts'] = []
     data['thread_datecounts'] = []
-
-    for i in range(delta.days + 1):
-        dateinside = group_by_date['min_date'] + timedelta(days=i)
-        str_date = str(dateinside)
-        if dateinside in group_by_date['comment']:
-            #data['comment_datecounts'][str_date] = group_by_date['comment'][dateinside]
-            data['comment_datecounts'].append([str_date, group_by_date['comment'][dateinside]])
-        else:
-            #data['comment_datecounts'][str_date] = 0
-            data['comment_datecounts'].append([str_date, 0])
-        if dateinside in group_by_date['comment_thread']:
-            #data['thread_datecounts'][str_date] = group_by_date['comment_thread'][dateinside]
-            data['thread_datecounts'].append([str_date, group_by_date['comment_thread'][dateinside]])
-        else:
-            #data['thread_datecounts'][str_date] = 0
-            data['thread_datecounts'].append([str_date, 0])
-
-    comm_total = 0
-    thread_total = 0
     data['comment_datecountsaggregate'] = []
     data['thread_datecountsaggregate'] = []
-    for str_date, count in data['comment_datecounts']:
-        comm_total += count
-        data['comment_datecountsaggregate'].append([str_date, comm_total])
-    for str_date, count in data['thread_datecounts']:
-        thread_total += count
-        data['thread_datecountsaggregate'].append([str_date, thread_total])
+
+    if group_by_date['max_date'] is not None and group_by_date['min_date'] is not None:
+
+        delta = group_by_date['max_date'] - group_by_date['min_date']
+        data['min_date'] = str(group_by_date['min_date'])
+        data['max_date'] = str(group_by_date['max_date'])
+
+        for i in range(delta.days + 1):
+            dateinside = group_by_date['min_date'] + timedelta(days=i)
+            str_date = str(dateinside)
+            if dateinside in group_by_date['comment']:
+                #data['comment_datecounts'][str_date] = group_by_date['comment'][dateinside]
+                data['comment_datecounts'].append([str_date, group_by_date['comment'][dateinside]])
+            else:
+                #data['comment_datecounts'][str_date] = 0
+                data['comment_datecounts'].append([str_date, 0])
+            if dateinside in group_by_date['comment_thread']:
+                #data['thread_datecounts'][str_date] = group_by_date['comment_thread'][dateinside]
+                data['thread_datecounts'].append([str_date, group_by_date['comment_thread'][dateinside]])
+            else:
+                #data['thread_datecounts'][str_date] = 0
+                data['thread_datecounts'].append([str_date, 0])
+
+        comm_total = 0
+        thread_total = 0
+        for str_date, count in data['comment_datecounts']:
+            comm_total += count
+            data['comment_datecountsaggregate'].append([str_date, comm_total])
+        for str_date, count in data['thread_datecounts']:
+            thread_total += count
+            data['thread_datecountsaggregate'].append([str_date, thread_total])
 
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
