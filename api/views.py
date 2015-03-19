@@ -143,7 +143,7 @@ def refresh_cache(request):
     response['nextrefresh'] = now + timedelta(0, settings.CACHES['default']['TIMEOUT'])
     return Response(response)
 
-# Private Methods
+# Internal Methods (not endpoints)
 
 def api_render(request, data, response_status=status.HTTP_200_OK):
     if not is_cached(request):
@@ -198,6 +198,13 @@ def cache_get_time(path):
         return cache.get('expiry_'+fixpath(path))
     else:
         return ""
+
+
+def db_table_exists(db, table):
+        from django.db import connections
+        table_names = connections[db].introspection.get_table_list(connections[db].cursor())
+        print table_names
+        return table in table_names
 
 
 def cache_path(request):

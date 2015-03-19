@@ -505,13 +505,15 @@ def student_personcourse(request, course_id='all'):
     courses.append(course['dbname'])
     data = []
     PersonCourse._meta.db_table = 'personcourse_'+course_id
-    paced_students = None
-    if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
-        paced_students = get_paced_students(request, course_id)
-    for table_user in PersonCourse.objects.using("personcourse").all():
-        if not paced_students or table_user.user_id in paced_students:
-            data.append(table_user.to_dict(fields))
-    print "LENGTH IS"+str(len(data))
+    pc_exists = api.views.db_table_exists('personcourse',PersonCourse._meta.db_table)
+    if pc_exists:
+        paced_students = None
+        if 'cutoff' in request.GET and request.GET['cutoff'] == 'true':
+            paced_students = get_paced_students(request, course_id)
+        for table_user in PersonCourse.objects.using("personcourse").all():
+            if not paced_students or table_user.user_id in paced_students:
+                data.append(table_user.to_dict(fields))
+    # print "LENGTH IS"+str(len(data))
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
