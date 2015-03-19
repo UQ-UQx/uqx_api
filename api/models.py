@@ -302,13 +302,19 @@ class DiscussionForum(object):
 
     @staticmethod
     def min_date(col_df):
-        min_date_post = col_df.find().sort("created_at", 1).limit(1)[0]
-        return min_date_post['created_at'].date()
+        try:
+            min_date_post = col_df.find().sort("created_at", 1).limit(1)[0]
+            return min_date_post['created_at'].date()
+        except IndexError:
+            return None
 
     @staticmethod
     def max_date(col_df):
-        max_date_post = col_df.find().sort("created_at", -1).limit(1)[0]
-        return max_date_post['created_at'].date()
+        try:
+            max_date_post = col_df.find().sort("created_at", -1).limit(1)[0]
+            return max_date_post['created_at'].date()
+        except IndexError:
+            return None
 
     @staticmethod
     def category_group_by_date(col_def, category_id):

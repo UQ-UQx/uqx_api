@@ -172,7 +172,6 @@ def discussion_category(request, course_id):
     json_file = course['dbname'].replace("_", "-") + '.json'
     courseinfo = loadcourseinfo(json_file)
 
-
     if courseinfo is None:
         return api.views.api_render(request, {'error': 'Can not find course info'}, status.HTTP_404_NOT_FOUND)
 
