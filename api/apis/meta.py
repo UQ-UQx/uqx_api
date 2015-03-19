@@ -185,6 +185,7 @@ def meta_structure(request, course_id=''):
         data = urllib2.urlopen(courseurl).read().replace('<script', '').replace('</script>', '')
     except:
         return api.views.api_render(request, {'error': 'Could not find course file'}, status.HTTP_404_NOT_FOUND)
+    print courseurl
     data = json.loads(data)
     return api.views.api_render(request, data, status.HTTP_200_OK)
 

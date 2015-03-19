@@ -172,6 +172,7 @@ def discussion_category(request, course_id):
     json_file = course['dbname'].replace("_", "-") + '.json'
     courseinfo = loadcourseinfo(json_file)
 
+
     if courseinfo is None:
         return api.views.api_render(request, {'error': 'Can not find course info'}, status.HTTP_404_NOT_FOUND)
 
@@ -199,15 +200,20 @@ def discussion_category(request, course_id):
         data[category_id]['popular_threads'] = category_sort_by_answer['popular_threads']
         data[category_id]['zones'] = category_sort_by_answer['zones']
 
+    print data
+
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
 def loadcourseinfo(json_file):
     courseurl = config.SERVER_URL + '/datasources/course_structure/'+json_file
-    courseinfofile = urllib2.urlopen(courseurl)
-    if courseinfofile:
-        courseinfo = json.load(courseinfofile)
-        return courseinfo
+    try:
+        courseinfofile = urllib2.urlopen(courseurl)
+        if courseinfofile:
+            courseinfo = json.load(courseinfofile)
+            return courseinfo
+    except Exception:
+        pass
     return None
 
 
@@ -217,22 +223,3 @@ def get_discussions(obj, found=[]):
     for child in obj['children']:
         found = get_discussions(child, found)
     return found
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
