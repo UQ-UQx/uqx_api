@@ -21,7 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def youtube_setup(course_id):
+def youtube_setup(course_id, force_load=False):
     global api_youtube
     global api_youtube_analytics
 
@@ -38,14 +38,19 @@ def youtube_setup(course_id):
     storage = Storage("cache/youtube_"+course_id+"_oauth2.json")
     youtube_credentials = storage.get()
 
+    print "AAA"
     print youtube_credentials
+    print "BBB"
 
     if youtube_credentials is None or youtube_credentials.invalid:
+        if not force_load:
+            return False
         youtube_credentials = run(flow, storage)
 
     http = youtube_credentials.authorize(httplib2.Http())
     api_youtube = build(youtube_servicename, youtube_version, http=http)
     api_youtube_analytics = build(youtube_analytics_servicename, youtube_analytics_version, http=http)
+    return True
 
 
 def youtube_query(command, options):
@@ -98,29 +103,40 @@ def videos_views(request, course_id):
     if course is None:
         return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
 
-    if api.views.is_cached(request):
+    doauth = False
+
+    if 'doauth' in request.GET and request.GET['doauth'] == 'true':
+        doauth = True
+
+    if api.views.is_cached(request) and not doauth:
         return api.views.api_cacherender(request)
 
-    youtube_setup(course_id)
-    now = datetime.now()
-    one_day_ago = (now - timedelta(days=1)).strftime("%Y-%m-%d")
-    one_year_ago = (now - timedelta(days=999)).strftime("%Y-%m-%d")
-    parser = OptionParser()
-    parser.add_option("--metrics", dest="metrics", help="Report metrics",
-      default="views,comments,estimatedMinutesWatched,averageViewDuration")
-    parser.add_option("--dimensions", dest="dimensions", help="Report dimensions",
-      default="video")
-    parser.add_option("--start-date", dest="start_date",
-      help="Start date, in YYYY-MM-DD format", default=one_year_ago)
-    parser.add_option("--end-date", dest="end_date",
-      help="End date, in YYYY-MM-DD format", default=one_day_ago)
-    parser.add_option("--start-index", dest="start_index", help="Start index",
-      default=1, type="int")
-    parser.add_option("--max-results", dest="max_results", help="Max results",
-      default=10, type="int")
-    parser.add_option("--sort", dest="sort", help="Sort order", default="-views")
-    (options, args) = parser.parse_args()
-    data = youtube_query("get_stats", options)
+    active = youtube_setup(course_id, doauth)
+
+    if active:
+
+        now = datetime.now()
+        one_day_ago = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+        one_year_ago = (now - timedelta(days=999)).strftime("%Y-%m-%d")
+        parser = OptionParser()
+        parser.add_option("--metrics", dest="metrics", help="Report metrics",
+          default="views,comments,estimatedMinutesWatched,averageViewDuration")
+        parser.add_option("--dimensions", dest="dimensions", help="Report dimensions",
+          default="video")
+        parser.add_option("--start-date", dest="start_date",
+          help="Start date, in YYYY-MM-DD format", default=one_year_ago)
+        parser.add_option("--end-date", dest="end_date",
+          help="End date, in YYYY-MM-DD format", default=one_day_ago)
+        parser.add_option("--start-index", dest="start_index", help="Start index",
+          default=1, type="int")
+        parser.add_option("--max-results", dest="max_results", help="Max results",
+          default=10, type="int")
+        parser.add_option("--sort", dest="sort", help="Sort order", default="-views")
+        (options, args) = parser.parse_args()
+        data = youtube_query("get_stats", options)
+
+    else:
+        data = {'status': 'error', 'message': 'Youtube authentication failed, add doauth=true to authorise with youtube'}
 
     return api.views.api_render(request, data, status.HTTP_200_OK)
 

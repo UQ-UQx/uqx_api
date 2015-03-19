@@ -180,8 +180,11 @@ def get_all_courses():
 def cache_save(path, data):
     logger.info("Saving cache for path "+fixpath(path)+", times out in "+str(settings.CACHES['default']['TIMEOUT']))
     cache.set(fixpath(path), data, settings.CACHES['default']['TIMEOUT'])
-    cache.set('expiry_'+fixpath(path), datetime.now().strftime("%Y-%m-%d %H:%M:%S"), settings.CACHES['default']['TIMEOUT'])
+    cache_update_time(path)
     pass
+
+def cache_update_time(path):
+    cache.set('expiry_'+fixpath(path), datetime.now().strftime("%Y-%m-%d %H:%M:%S"), settings.CACHES['default']['TIMEOUT'])
 
 
 def cache_get(path):
