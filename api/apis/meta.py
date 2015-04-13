@@ -66,42 +66,42 @@ def meta_courseinfo(request):
         data = '[]'
         try:
             data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')
-        except:
-            return api.views.api_render(request, {'error': 'Could not load course data'}, status.HTTP_404_NOT_FOUND)
-        try:
-            data = json.loads(data)
-            max_per_day_date = datetime.datetime.now()
-            if 'end' in data:
-                course['end'] = data['end']
-            if 'start' in data:
-                course['start'] = data['start']
-                max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
-            if 'display_name' in data:
-                course['display_name'] = data['display_name']
-            max_per_day_date = max_per_day_date.replace(tzinfo=None)
-            total = 0
-            within_per_day = 0
-            certificates = 0
-            first_date = datetime.datetime.now()
-            for user in UserEnrol.objects.using(db).all():
-                userdate = user.created.replace(tzinfo=None)
-                if first_date > userdate:
-                    first_date = userdate
-                if userdate < max_per_day_date:
-                    within_per_day += 1
-                total += 1
-                certificates += 1
+            try:
+                data = json.loads(data)
+                max_per_day_date = datetime.datetime.now()
+                if 'end' in data:
+                    course['end'] = data['end']
+                if 'start' in data:
+                    course['start'] = data['start']
+                    max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
+                if 'display_name' in data:
+                    course['display_name'] = data['display_name']
+                max_per_day_date = max_per_day_date.replace(tzinfo=None)
+                total = 0
+                within_per_day = 0
+                certificates = 0
+                first_date = datetime.datetime.now()
+                for user in UserEnrol.objects.using(db).all():
+                    userdate = user.created.replace(tzinfo=None)
+                    if first_date > userdate:
+                        first_date = userdate
+                    if userdate < max_per_day_date:
+                        within_per_day += 1
+                    total += 1
+                    certificates += 1
 
-            certificates = len(UserCertificate.objects.using(db).filter(status='downloadable'))
+                certificates = len(UserCertificate.objects.using(db).filter(status='downloadable'))
 
-            range = (max_per_day_date - first_date).days
+                range = (max_per_day_date - first_date).days
 
-            per_day = round(within_per_day/range, 2)
+                per_day = round(within_per_day/range, 2)
 
-            course['enrolments'] = total
-            course['enrolments_per_day'] = per_day
-            course['certificates'] = certificates
-            courses.append(course)
+                course['enrolments'] = total
+                course['enrolments_per_day'] = per_day
+                course['certificates'] = certificates
+                courses.append(course)
+            except:
+                pass
         except:
             pass
     data = courses
