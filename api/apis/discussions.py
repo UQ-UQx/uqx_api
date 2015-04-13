@@ -205,8 +205,6 @@ def discussion_category(request, course_id):
         data[category_id]['popular_threads'] = category_sort_by_answer['popular_threads']
         data[category_id]['zones'] = category_sort_by_answer['zones']
 
-    print data
-
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
