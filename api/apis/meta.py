@@ -298,9 +298,8 @@ def get_latest_ingest_dates():
             if last_ingested_item is None or ingest.completed_date > last_ingested_item.completed_date:
                 last_ingested_item = ingest
             if ingest.service_name == 'Clickstream':
-                click_date = str(ingest.meta).split('/')
-                click_date = click_date[-1].split('_')
-                click_date = datetime.datetime.strptime(click_date[0], "%Y-%m-%d")
+                click_date = ingest.meta.replace(".log", "")
+                click_date = datetime.datetime.strptime(click_date[-10:], "%Y-%m-%d")
                 if last_clicksteam_item_date is None or click_date > last_clicksteam_item_date:
                     last_clicksteam_item_date = click_date
 
