@@ -42,6 +42,11 @@ Create the api database in your MySQL installation (if not already created by op
 mysql -u root -p
 CREATE DATABASE api;
 ```
+Sync the django database
+```bash
+cd [BASE_PATH]
+python manage.py syncdb
+```
 Create one or more users which can authenticate (this uses Django's built in user authentication so you can also connect it via other means)
 ```bash
 cd [BASE_PATH]
