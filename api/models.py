@@ -100,11 +100,31 @@ class Log(Document):
         return results
 
 
+class UserDetail(models.Model):
+    id = models.IntegerField(primary_key=True)
+    username = models.CharField(max_length=255)
+    email = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'auth_user'
+
+
 class UserProfile(models.Model):
     user_id = models.CharField(max_length=255)
+
+    name = models.CharField(max_length=255)
+    language = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    meta = models.CharField(max_length=255)
+    mailing_address = models.CharField(max_length=255)
+    goals = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+
     gender = models.CharField(max_length=255)
     year_of_birth = models.CharField(max_length=255)
     level_of_education = models.CharField(max_length=255)
+
 
     class Meta:
         db_table = 'auth_userprofile'

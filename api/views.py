@@ -15,6 +15,7 @@ from api.apis.students import *
 from api.apis.discussions import *
 from api.apis.downloads import *
 from api.apis.videos import *
+from api.apis.person import *
 
 # Logging
 import logging
@@ -116,6 +117,9 @@ def endpoints():
     points['meta_ingeststatus'] = {'path': 'meta/ingeststatus'}
 
     points['videos_views'] = {'path': 'videos/views', 'option': 'course_id', 'requirevar': True}
+
+    points['person_profile'] = {'path': 'person/profile', 'option': 'user_id', 'requirevar': True}
+    points['person_lookup'] = {'path': 'person/lookup', 'option': 'details', 'requirevar': True}
     logger.info("Getting endpoints")
     return points
 
