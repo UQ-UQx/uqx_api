@@ -215,6 +215,8 @@ def cache_path(request):
     get = ""
     for param in request.GET:
         if param != 'refreshcache' and param != 'format':
+            param = param.replace(" ", "")
+            param = param.replace("%20", "")
             get += param+":"+request.GET[param]
     if get != "":
         get = "?"+get
