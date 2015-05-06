@@ -214,16 +214,15 @@ def db_table_exists(db, table):
 def cache_path(request):
     get = ""
     for param in request.GET:
+        print param
         if param != 'refreshcache' and param != 'format':
             paramval = request.GET[param]
-            paramval = paramval.replace(" ", "")
-            paramval = paramval.replace("%20", "")
+            paramval = paramval.replace(" ", "").replace("%20", "")
             get += param+":"+paramval
     if get != "":
         get = "?"+get
-    print "$$$$$$$$$$"
-    print get
-    return str(fixpath(request.path+get))
+    request_path = request.path.replace(" ", "").replace("%20", "")
+    return str(fixpath(request_path+get))
 
 
 def fixpath(path):
