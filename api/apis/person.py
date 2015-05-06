@@ -128,8 +128,14 @@ def person_lookup(request, details):
                     profile = {}
                     profile['user_id'] = user.user_id
                     profile['name'] = user.name
-                    profile['location'] = user.location
-                    profile['country'] = user.country
+                    if hasattr(user, 'location'):
+                        profile['location'] = user.location
+                    else:
+                        profile['location'] = "Unknown"
+                    if hasattr(user, 'country'):
+                        profile['country'] = user.country
+                    else:
+                        profile['country'] = "Unknown"
                     profile['year_of_birth'] = user.year_of_birth
                     profile['level_of_education'] = user.level_of_education
                     profile['courses'] = [db]
