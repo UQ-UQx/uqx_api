@@ -71,26 +71,27 @@ def person_profile(request, user_id):
             print person
             print "===="
             person_object = {}
-            person_object['registered'] = person[0].registered
-            person_object['viewed'] = person[0].viewed
-            person_object['explored'] = person[0].explored
-            person_object['certified'] = person[0].certified
-            person_object['final_cc_cname'] = person[0].final_cc_cname
-            person_object['LoE'] = person[0].LoE
-            person_object['YoB'] = person[0].YoB
-            person_object['gender'] = person[0].gender
-            person_object['mode'] = person[0].mode
-            person_object['grade'] = person[0].grade
-            person_object['start_time'] = person[0].start_time
-            person_object['last_event'] = person[0].last_event
-            person_object['nevents'] = person[0].nevents
-            person_object['ndays_act'] = person[0].ndays_act
-            person_object['nplay_video'] = person[0].nplay_video
-            person_object['nchapters'] = person[0].nchapters
-            person_object['nforum_posts'] = person[0].nforum_posts
-            person_object['roles'] = person[0].roles
-            person_object['attempted_problems'] = person[0].attempted_problems
-            personcourse[course_id] = person_object
+            if len(person) > 0:
+                person_object['registered'] = person[0].registered
+                person_object['viewed'] = person[0].viewed
+                person_object['explored'] = person[0].explored
+                person_object['certified'] = person[0].certified
+                person_object['final_cc_cname'] = person[0].final_cc_cname
+                person_object['LoE'] = person[0].LoE
+                person_object['YoB'] = person[0].YoB
+                person_object['gender'] = person[0].gender
+                person_object['mode'] = person[0].mode
+                person_object['grade'] = person[0].grade
+                person_object['start_time'] = person[0].start_time
+                person_object['last_event'] = person[0].last_event
+                person_object['nevents'] = person[0].nevents
+                person_object['ndays_act'] = person[0].ndays_act
+                person_object['nplay_video'] = person[0].nplay_video
+                person_object['nchapters'] = person[0].nchapters
+                person_object['nforum_posts'] = person[0].nforum_posts
+                person_object['roles'] = person[0].roles
+                person_object['attempted_problems'] = person[0].attempted_problems
+                personcourse[course_id] = person_object
 
     if len(courses) > 0:
         data = {}
