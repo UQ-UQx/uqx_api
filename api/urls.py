@@ -10,6 +10,6 @@ for endpointkey in endpoints:
     endpoint = endpoints[endpointkey]
     urlpatterns.append(url(r'^'+endpoint['path']+'/$', getattr(views, endpointkey), name=endpointkey))
     if "option" in endpoint:
-        option = '/(?P<'+endpoint['option']+'>[\w]+)'
+        option = '/(?P<'+endpoint['option']+'>[\w ]+)'
         urlpatterns.append(url(r'^'+endpoint['path']+option+'/$', getattr(views, endpointkey), name=endpointkey+"_"+endpoint['option']))
         pass
