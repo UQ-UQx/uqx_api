@@ -61,7 +61,7 @@ def meta_courseinfo(request):
 
         coursedb = api.views.get_course(course['id'])
 
-        filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
+        filename = uqx_api.courses.EDX_DATABASES[db]['discussiontable'].replace("/", "-").replace("-prod", "")
         courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json';
         data = '[]'
         try:
