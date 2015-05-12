@@ -61,7 +61,7 @@ def meta_courseinfo(request):
 
         coursedb = api.views.get_course(course['id'])
 
-        filename = coursedb['dbname'].replace("_", "-")
+        filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
         courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json';
         data = '[]'
         try:
@@ -180,13 +180,13 @@ def meta_structure(request, course_id=''):
     if course is None:
         return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
 
-    filename = course['dbname'].replace("_", "-")
+    filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
     courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
     data = '[]'
     try:
         data = urllib2.urlopen(courseurl).read().replace('<script', '').replace('</script>', '')
     except:
-        return api.views.api_render(request, {'error': 'Could not find course file'}, status.HTTP_404_NOT_FOUND)
+        return api.views.api_render(request, {'error': 'Could not find course file: Looking for '+str(courseurl)}, status.HTTP_404_NOT_FOUND)
     print courseurl
     data = json.loads(data)
     return api.views.api_render(request, data, status.HTTP_200_OK)
