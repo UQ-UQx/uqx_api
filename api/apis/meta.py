@@ -102,9 +102,11 @@ def meta_courseinfo(request):
                 courses.append(course)
             except:
                 print "COULDNT PARSE COURSE DATA FOR "+course['id']
+                logger.info("COULDNT PARSE COURSE DATA FOR "+course['id'])
                 pass
         except:
             print "COULDNT PARSE COURSE "+course['id']
+            logger.info("COULDNT PARSE COURSE "+course['id'])
             pass
     data = courses
     return api.views.api_render(request, data, status.HTTP_200_OK)
