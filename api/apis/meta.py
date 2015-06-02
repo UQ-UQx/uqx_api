@@ -100,13 +100,16 @@ def meta_courseinfo(request):
                 course['enrolments_per_day'] = per_day
                 course['certificates'] = certificates
                 courses.append(course)
-            except:
+            except Exception as e:
                 print "COULDNT PARSE COURSE DATA FOR "+course['id']
                 logger.info("COULDNT PARSE COURSE DATA FOR "+course['id'])
+                logger.info(e)
+                print data
                 pass
-        except:
+        except Exception as e:
             print "COULDNT PARSE COURSE "+course['id']
             logger.info("COULDNT PARSE COURSE "+course['id'])
+            logger.info(e)
             pass
     data = courses
     return api.views.api_render(request, data, status.HTTP_200_OK)
