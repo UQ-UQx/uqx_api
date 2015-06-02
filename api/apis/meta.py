@@ -103,12 +103,14 @@ def meta_courseinfo(request):
             except Exception as e:
                 print "COULDNT PARSE COURSE DATA FOR "+course['id']
                 logger.info("COULDNT PARSE COURSE DATA FOR "+course['id'])
+                logger.info("COURSE URL: "+str(courseurl))
                 logger.info(e)
                 print data
                 pass
         except Exception as e:
             print "COULDNT PARSE COURSE "+course['id']
             logger.info("COULDNT PARSE COURSE "+course['id'])
+            logger.info("COURSE URL: "+str(courseurl))
             logger.info(e)
             pass
     data = courses
