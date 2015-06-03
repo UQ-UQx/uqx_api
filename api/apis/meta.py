@@ -81,8 +81,13 @@ def meta_courseinfo(request):
                     data['start'] = str(str(data['start']).replace('+00:00', 'Z'))
                     logger.info(data['start'])
                     logger.info(type(data['start']))
-                    #data['start'] = "2015-05-11T06:00:00Z"
-                    max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
+                    try:
+                        max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
+                    except Exception:
+                        logger.info("TRYING AGAIN")
+                        data['start'] = str(data['start'])[0:10]
+                        max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
+                        logger.info("DIDNT CRASH")
                     logger.info("COURSE INFO - MAX DATE")
                 if 'display_name' in data:
                     course['display_name'] = data['display_name']
