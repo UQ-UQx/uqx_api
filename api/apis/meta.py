@@ -85,7 +85,9 @@ def meta_courseinfo(request):
                         max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
                     except Exception:
                         logger.info("TRYING AGAIN")
+                        logger.info(data['start'])
                         data['start'] = str(data['start'])[0:10]
+                        logger.info(data['start'])
                         max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
                         logger.info("DIDNT CRASH")
                     logger.info("COURSE INFO - MAX DATE")
