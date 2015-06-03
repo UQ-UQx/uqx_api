@@ -78,7 +78,7 @@ def meta_courseinfo(request):
                     course['start'] = data['start']
                     logger.info("COURSE INFO - START DATE")
                     logger.info(data['start'])
-                    data['start'] = str(str(data['start']).replace('+00:00', 'Z'))
+                    data['start'] = str(str(data['start']).replace('+00:00', 'Z')).replace('"', "")
                     logger.info(data['start'])
                     logger.info(type(data['start']))
                     try:
