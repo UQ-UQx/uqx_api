@@ -86,7 +86,7 @@ def meta_courseinfo(request):
                     except Exception:
                         logger.info("TRYING AGAIN")
                         logger.info(data['start'])
-                        data['start'] = str(data['start'])[0:10]
+                        data['start'] = str(data['start'])[0:11]
                         logger.info(data['start'])
                         max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
                         logger.info("DIDNT CRASH")
