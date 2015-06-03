@@ -66,40 +66,23 @@ def meta_courseinfo(request):
         data = '[]'
         try:
             data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')
-            logger.info("COURSE INFO - LOADING URL")
             try:
                 data = json.loads(data)
-                logger.info("COURSE INFO - LOADING JSON")
                 max_per_day_date = datetime.datetime.now()
                 if 'end' in data:
                     course['end'] = data['end']
-                    logger.info("COURSE INFO - END DATE")
                 if 'start' in data:
                     course['start'] = data['start']
-                    logger.info("COURSE INFO - START DATE")
-                    logger.info(data['start'])
                     data['start'] = str(str(data['start']).replace('+00:00', 'Z')).replace('"', "")
-                    logger.info(data['start'])
-                    logger.info(type(data['start']))
                     try:
                         max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
-                    except Exception:
-                        logger.info("TRYING AGAIN")
-                        logger.info(data['start'])
-                        data['start'] = str(data['start'])[0:11]
-                        logger.info(data['start'])
-                        max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
-                        logger.info("DIDNT CRASH")
-                    logger.info("COURSE INFO - MAX DATE")
                 if 'display_name' in data:
                     course['display_name'] = data['display_name']
-                    logger.info("COURSE INFO - DISPLAY NAME")
                 max_per_day_date = max_per_day_date.replace(tzinfo=None)
                 total = 0
                 within_per_day = 0
                 certificates = 0
                 first_date = datetime.datetime.now()
-                logger.info("COURSE INFO - CHECKING USERS")
                 for user in UserEnrol.objects.using(db).all():
                     userdate = user.created.replace(tzinfo=None)
                     if first_date > userdate:
@@ -109,17 +92,12 @@ def meta_courseinfo(request):
                     total += 1
                     certificates += 1
 
-                logger.info("COURSE INFO - FINISHED CHECKING USERS")
 
                 certificates = len(UserCertificate.objects.using(db).filter(status='downloadable'))
 
                 range = (max_per_day_date - first_date).days
 
-                logger.info("COURSE INFO - GETTING RANGE")
-
                 per_day = round(within_per_day/range, 2)
-
-                logger.info("COURSE INFO - PER DAY")
 
                 course['enrolments'] = total
                 course['enrolments_per_day'] = per_day
