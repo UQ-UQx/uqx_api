@@ -79,6 +79,8 @@ def meta_courseinfo(request):
                     logger.info("COURSE INFO - START DATE")
                     logger.info(data['start'])
                     data['start'] = data['start'].replace('+00:00', 'Z')
+                    logger.info(data['start'])
+                    logger.info(type(data['start']))
                     max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
                     logger.info("COURSE INFO - MAX DATE")
                 if 'display_name' in data:
