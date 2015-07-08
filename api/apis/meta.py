@@ -74,6 +74,7 @@ def meta_courseinfo(request):
                 if 'start' in data:
                     course['start'] = data['start']
                     data['start'] = str(str(data['start']).replace('+00:00', 'Z')).replace('"', "")
+                    data['end'] = str(str(data['end']).replace('+00:00', 'Z')).replace('"', "")
                     max_per_day_date = dateutil.parser.parse(data['start']) + datetime.timedelta(days=7)
                 if 'display_name' in data:
                     course['display_name'] = data['display_name']
@@ -90,7 +91,6 @@ def meta_courseinfo(request):
                         within_per_day += 1
                     total += 1
                     certificates += 1
-
 
                 certificates = len(UserCertificate.objects.using(db).filter(status='downloadable'))
 
