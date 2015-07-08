@@ -76,6 +76,8 @@ def meta_courseinfo(request):
                     course['start'] = data['start']
                     course['start'] = str(str(course['start']).replace('+00:00', 'Z')).replace('"', "")
                     max_per_day_date = dateutil.parser.parse(course['start']) + datetime.timedelta(days=7)
+                if 'start' in data and 'end' not in data:
+                    course['end'] = course['start']
                 if 'display_name' in data:
                     course['display_name'] = data['display_name']
                 max_per_day_date = max_per_day_date.replace(tzinfo=None)
