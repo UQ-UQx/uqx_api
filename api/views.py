@@ -111,6 +111,7 @@ def endpoints():
     points['meta_structure'] = {'path': 'meta/structure', 'option': 'course_id', 'requirevar': True}
     points['meta_countries'] = {'path': 'meta/countries'}
     points['meta_modes'] = {'path': 'meta/modes'}
+    points['meta_courseevents'] = {'path': 'meta/courseevents', 'option': 'course_id', 'requirevar': True}
     points['meta_courseprofile'] = {'path': 'meta/courseprofile', 'option': 'course_id'}
     points['meta_enrolcount'] = {'path': 'meta/enrolcount'}
     points['meta_lastingest'] = {'path': 'meta/lastingest'}

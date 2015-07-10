@@ -1,11 +1,16 @@
 from django.db import models
 from mongoengine import *
-from datetime import datetime
 from bson import Code
 from mongoengine.connection import _get_db
 
+import MySQLdb
+import config
+
 import pymongo
-from bson.objectid import ObjectId
+
+from django.db import connections
+from datetime import date, datetime, timedelta
+
 
 # Logging
 import logging
@@ -309,6 +314,69 @@ class Ingestor(models.Model):
         db_table = 'ingestor'
 
 
+class CourseEvent(object):
+    def __init__(self, db_name, table_name, course_start):
+        self.db_name = db_name
+        self.table_name = table_name
+        self.course_start = course_start
+        print course_start
+        cursor = connections[db_name].cursor()
+
+        self.events = []
+        cursor.execute('desc %s' % table_name)
+        for col in cursor.fetchall():
+            if col[0] not in ['id', 'course_id', 'event_date']:
+                self.events.append(col[0])
+        #print self.events
+
+        self.event_start = None
+        self.event_end = None
+        cursor.execute('SELECT MIN(%s) FROM %s' % ('event_date', table_name))
+        self.event_start = cursor.fetchone()[0]
+        if self.course_start is None:
+            self.course_start = self.event_start
+        cursor.execute('SELECT MAX(%s) FROM %s' % ('event_date', table_name))
+        self.event_end = cursor.fetchone()[0]
+        print self.event_start
+        #print type(self.event_start)
+        print self.event_end
+
+        cursor.close()
+
+    def counts_group_by_week(self):
+        #str_events = ', ' . join('SUM(%s)' % e for e in self.events)
+        #query = 'SELECT ' + str_events + ' From ' + self.table_name
+        #result = cursor.execute(query).fetchone()
+
+        eventcount = {}
+        sum_events = []
+        for event in self.events:
+            sum_field = 's_' + event[2::].replace("$", ".")
+            sum_events.append(sum_field)
+            eventcount[sum_field] = {}
+
+        str_events = ', ' . join('SUM(%s)' % e for e in self.events)
+
+        cursor = connections[self.db_name].cursor()
+        query = 'SELECT ' + str_events + ' From ' + self.table_name + ' WHERE event_date BETWEEN "%s" AND "%s"'
+
+        d1 = self.course_start
+        d2 = self.course_start + timedelta(days=6)
+        while d2 < self.event_end:
+            #sum_query = query % (d1, d2)
+            #print d1
+            #print d2
+            #print sum_query
+            cursor.execute(query % (d1, d2))
+            row = cursor.fetchone()
+            for index, sum_field in enumerate(sum_events):
+                eventcount[sum_field][str(d1)] = row[index]
+            d1 = d2 + timedelta(days=1)
+            d2 = d1 + timedelta(days=6)
+
+        return eventcount
+
+
 class DiscussionForum(object):
     mongo_client = None
 
@@ -571,8 +639,6 @@ class DiscussionForum(object):
 
         #return {"country_post": country_list, "post_max": post_max, "country_post_enrol": country_post_enrol_list, "post_enrol_max": post_enrol_max}
         return {"country_dict": country_dict, "country_enrol": country_enrol}
-
-
 
 
 

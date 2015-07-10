@@ -6,11 +6,13 @@ from collections import OrderedDict
 import pycountry
 import urllib2
 import json
-import datetime
-from api.models import UserEnrol, CourseProfile, UserCertificate, PersonCourse, Ingestor
+from datetime import date, datetime, timedelta
+from api.models import UserEnrol, CourseProfile, UserCertificate, PersonCourse, Ingestor, CourseEvent
 import dateutil
 from rest_framework.permissions import AllowAny
 import config
+
+from django.db import models
 
 # Logging
 import logging
@@ -356,3 +358,56 @@ def meta_ingeststatus(request):
             ingestions[ingest]['last_ingest_date'] = datetime.datetime.strftime(ingestions[ingest]['last_ingest_date'].completed_date, "%Y-%m-%d %H:%M:%S")
 
     return api.views.api_render(request, ingestions, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def meta_courseevents(request, course_id='all'):
+    """
+    Returns the data of course events
+    """
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+    if course_id is 'all':
+        return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+    else:
+        course = api.views.get_course(course_id)
+        if course is None:
+            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+    print course
+
+    # Reading course_start from course info
+    course_start = None
+    filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
+    courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
+    try:
+        courseinfo = urllib2.urlopen(courseurl).read().replace('<script', '').replace('</script>', '')
+        courseinfo = json.loads(courseinfo)
+        if 'start' in courseinfo:
+            course_start = courseinfo['start']
+            print course_start
+    except Exception as e:
+        print "COULDNT PARSE COURSE "+course['id']
+        logger.info("COULDNT PARSE COURSE "+course['id'])
+        logger.info("COURSE URL: "+str(courseurl))
+        logger.info(e)
+        pass
+    course_start = datetime.strptime(course_start[:19], '%Y-%m-%dT%H:%M:%S').date()
+
+    #
+    db_name = 'Course_Event'
+    app_label = 'courseevent'
+    table_name = course['id']
+
+    ce = CourseEvent(db_name, app_label + '_' + table_name, course_start)
+    data = ce.counts_group_by_week()
+
+    """
+    # Dynamic Model
+    model = create_model(table_name, fields,
+    app_label=app_label,
+    module=db_name+'.'+app_label+'.'+table_name,)
+
+    # Get the end date of events
+    end_record = model.objects.using(db_name).order_by('-event_date')[0]
+    end_date = end_record.event_date
+    """
+    return api.views.api_render(request, data, status.HTTP_200_OK)
