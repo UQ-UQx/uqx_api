@@ -13,7 +13,7 @@ EDX_DATABASES = {
     'bioimg_101x_1T2015': {'dbname': 'UQx_BIOIMG101x_1T2015', 'mongoname': 'UQx/BIOIMG101x/1T2015', 'discussiontable': 'UQx-BIOIMG101x-1T2015-prod', 'icon': 'fa-desktop', 'year': '2015'},
     'denial_101x_1T2015': {'dbname': 'UQx_Denial101x_1T2015', 'mongoname': 'UQx/Denial101x/1T2015', 'discussiontable': 'UQx-Denial101x-1T2015-prod', 'icon': 'fa-recycle', 'year': '2015'},
     'learn_101x_1T2015': {'dbname': 'UQx_Learn101x_1T2015', 'mongoname': 'UQx/Learn101x/1T2015', 'discussiontable': 'UQx-Learn101x-1T2015-prod', 'icon': 'fa-mortar-board', 'year': '2015'},
-    'tropic_101x_1T2015': {'dbname': 'UQx_TROPIC101x_1T2015', 'mongoname': 'UQx/TROPIC101x/1T2015', 'discussiontable': 'UQx-TROPIC101x-1T2015-prod', 'icon': 'fa-tree', 'year': '2015'},
+    'tropic_101x_2T2015': {'dbname': 'UQx_Tropic101_2T2015', 'mongoname': 'UQx/TROPIC101x/2T2015', 'discussiontable': 'UQx-TROPIC101x-2T2015-prod', 'icon': 'fa-tree', 'year': '2015'},
     'world_101x_2T2015': {'dbname': 'UQx_World101x_2T2015', 'mongoname': 'UQx/World101x/2T2015', 'discussiontable': 'UQx-World101x-2T2015-prod', 'icon': 'fa-map-marker', 'year': '2015'},
 }
 
