@@ -179,6 +179,7 @@ def get_all_courses():
     courses = dict(uqx_api.courses.EDX_DATABASES)
     del courses['default']
     del courses['personcourse']
+    del courses['Course_Event']
     return courses
 
 
