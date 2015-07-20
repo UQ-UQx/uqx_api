@@ -18,6 +18,7 @@ EDX_DATABASES = {
     'world_101x_2T2015': {'dbname': 'UQx_World101x_2T2015', 'mongoname': 'UQx/World101x/2T2015', 'discussiontable': 'UQx-World101x-2T2015-prod', 'icon': 'fa-map-marker', 'year': '2015'},
     'denial_101x_2T2015': {'dbname': 'UQx_Denial101x_2T2015', 'mongoname': 'UQx/Denial101x/2T2015', 'discussiontable': 'UQx-Denial101x-2T2015-prod', 'icon': 'fa-recycle', 'year': '2015'},
     'write_101x_2T2015': {'dbname': 'UQx_Write101x_2T2015', 'mongoname': 'UQx/Write101x/2T2015', 'discussiontable': 'UQx-Write101x-2T2015-prod', 'icon': 'fa-pencil', 'year': '2015'},
+    'crime_101x_2T2015': {'dbname': 'UQx_Crime101x_2T2015', 'mongoname': 'UQx/Crime101x/2T2015', 'discussiontable': 'UQx-Crime101x-2T2015-prod', 'icon': 'fa-gavel', 'year': '2015'},
 }
 
 for DB in EDX_DATABASES:
