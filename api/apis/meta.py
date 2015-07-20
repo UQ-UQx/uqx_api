@@ -77,7 +77,7 @@ def meta_courseinfo(request):
                 if 'start' in data:
                     course['start'] = data['start']
                     course['start'] = str(str(course['start']).replace('+00:00', 'Z')).replace('"', "")
-                    max_per_day_date = dateutil.parser.parse(course['start']) + datetime.timedelta(days=7)
+                    max_per_day_date = dateutil.parser.parse(course['start']) + timedelta(days=7)
                 if 'start' in data and 'end' not in data:
                     course['end'] = course['start']
                 if 'display_name' in data:
@@ -274,9 +274,9 @@ def meta_enrolcount(request, course_id='all'):
 
         if last_date is not None:
 
-            month_ago = last_date + datetime.timedelta(-30)
-            week_ago = last_date + datetime.timedelta(-7)
-            day_ago = last_date + datetime.timedelta(-1)
+            month_ago = last_date + timedelta(-30)
+            week_ago = last_date + timedelta(-7)
+            day_ago = last_date + timedelta(-1)
 
             PersonCourse._meta.db_table = 'personcourse_'+course
             for table_user in PersonCourse.objects.using("personcourse").all():
