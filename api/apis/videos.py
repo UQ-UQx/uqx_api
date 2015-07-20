@@ -120,7 +120,7 @@ def videos_views(request, course_id):
         one_year_ago = (now - timedelta(days=999)).strftime("%Y-%m-%d")
         parser = OptionParser()
         parser.add_option("--metrics", dest="metrics", help="Report metrics",
-          default="views,comments,estimatedMinutesWatched,averageViewDuration,likes,dislikes,shares,viewerPercentage")
+          default="views,comments,estimatedMinutesWatched,averageViewDuration,viewerPercentage")
         parser.add_option("--dimensions", dest="dimensions", help="Report dimensions",
           default="video")
         parser.add_option("--start-date", dest="start_date",
