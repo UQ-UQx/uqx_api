@@ -28,7 +28,7 @@ def meta_courses(request):
         return api.views.api_cacherender(request)
     courses = []
     for db in uqx_api.courses.EDX_DATABASES:
-        if db == 'default' or db == 'personcourse':
+        if db == 'default' or db == 'personcourse' or db == 'Course_Event':
             continue
 
         course = OrderedDict()
@@ -52,7 +52,7 @@ def meta_courseinfo(request):
         return api.views.api_cacherender(request)
     courses = []
     for db in uqx_api.courses.EDX_DATABASES:
-        if db == 'default' or db == 'personcourse':
+        if db == 'default' or db == 'personcourse' or db == 'Course_Event':
             continue
 
         course = OrderedDict()
@@ -134,7 +134,7 @@ def meta_uniques(request):
     users = []
     total = 0
     for db in uqx_api.courses.EDX_DATABASES:
-        if db == 'default' or db == 'personcourse':
+        if db == 'default' or db == 'personcourse' or db == 'Course_Event':
             continue
 
         for user in UserEnrol.objects.using(db).all():

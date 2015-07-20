@@ -54,7 +54,7 @@ def endpointlist(request, theformat=None):
     """
     courses = []
     for db in uqx_api.courses.EDX_DATABASES:
-        if db == 'default' or db == 'personcourse':
+        if db == 'default' or db == 'personcourse' or db == 'Course_Event':
             continue
         courses.append(db)
     endpointlist = OrderedDict()

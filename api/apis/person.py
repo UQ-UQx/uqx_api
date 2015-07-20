@@ -33,7 +33,7 @@ def person_profile(request, user_id):
     profiles = {}
     personcourse = {}
     for db in uqx_api.courses.EDX_DATABASES:
-        if db == 'default' or db == 'personcourse':
+        if db == 'default' or db == 'personcourse' or db == 'Course_Event':
             continue
         print db
         try:
@@ -112,7 +112,7 @@ def person_lookup(request, details):
 
     profiles = {}
     for db in uqx_api.courses.EDX_DATABASES:
-        if db == 'default' or db == 'personcourse':
+        if db == 'default' or db == 'personcourse' or db == 'Course_Event':
             continue
         print db
         try:
