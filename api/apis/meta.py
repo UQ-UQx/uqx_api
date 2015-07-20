@@ -70,7 +70,7 @@ def meta_courseinfo(request):
             data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')
             try:
                 data = json.loads(data)
-                max_per_day_date = datetime.datetime.now()
+                max_per_day_date = datetime.now()
                 if 'end' in data:
                     course['end'] = data['end']
                     course['end'] = str(str(course['end']).replace('+00:00', 'Z')).replace('"', "")
@@ -86,7 +86,7 @@ def meta_courseinfo(request):
                 total = 0
                 within_per_day = 0
                 certificates = 0
-                first_date = datetime.datetime.now()
+                first_date = datetime.now()
                 for user in UserEnrol.objects.using(db).all():
                     userdate = user.created.replace(tzinfo=None)
                     if first_date > userdate:
@@ -314,13 +314,13 @@ def get_latest_ingest_dates():
                 last_ingested_item = ingest
             if ingest.service_name == 'Clickstream':
                 click_date = ingest.meta.replace(".log", "")
-                click_date = datetime.datetime.strptime(click_date[-10:], "%Y-%m-%d")
+                click_date = datetime.strptime(click_date[-10:], "%Y-%m-%d")
                 if last_clicksteam_item_date is None or click_date > last_clicksteam_item_date:
                     last_clicksteam_item_date = click_date
 
     data = OrderedDict()
-    data['ingest_date'] = datetime.datetime.strftime(last_ingested_item.completed_date, "%Y-%m-%d")
-    data['data_date'] = datetime.datetime.strftime(last_clicksteam_item_date, "%Y-%m-%d")
+    data['ingest_date'] = datetime.strftime(last_ingested_item.completed_date, "%Y-%m-%d")
+    data['data_date'] = datetime.strftime(last_clicksteam_item_date, "%Y-%m-%d")
     return data
 
 @api_view(['GET'])
@@ -350,12 +350,12 @@ def meta_ingeststatus(request):
         if ingest.completed == 0 and ingest.started == 1:
             ingestions[ingest.service_name]['current'] = ingest.meta
             if ingest.started_date is not None:
-                ingestions[ingest.service_name]['current_start'] = datetime.datetime.strftime(ingest.started_date, "%Y-%m-%d %H:%M:%S")
+                ingestions[ingest.service_name]['current_start'] = datetime.strftime(ingest.started_date, "%Y-%m-%d %H:%M:%S")
         ingestions[ingest.service_name]['total'] += 1
 
     for ingest in ingestions:
         if ingestions[ingest]['last_ingest_date'] is not None:
-            ingestions[ingest]['last_ingest_date'] = datetime.datetime.strftime(ingestions[ingest]['last_ingest_date'].completed_date, "%Y-%m-%d %H:%M:%S")
+            ingestions[ingest]['last_ingest_date'] = datetime.strftime(ingestions[ingest]['last_ingest_date'].completed_date, "%Y-%m-%d %H:%M:%S")
 
     return api.views.api_render(request, ingestions, status.HTTP_200_OK)
 
