@@ -96,8 +96,8 @@ def meta_courseinfo(request):
                         within_per_day += 1
                     total += 1
                     certificates += 1
-                    if userdate < course['end']:
-                        duringcourse += 1
+                    #if userdate < course['end']:
+                    duringcourse += 1
 
                 certificates = len(UserCertificate.objects.using(db).filter(status='downloadable'))
 
