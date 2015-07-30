@@ -86,6 +86,7 @@ def meta_courseinfo(request):
                 total = 0
                 within_per_day = 0
                 certificates = 0
+                duringcourse = 0
                 first_date = datetime.now()
                 for user in UserEnrol.objects.using(db).all():
                     userdate = user.created.replace(tzinfo=None)
@@ -95,6 +96,8 @@ def meta_courseinfo(request):
                         within_per_day += 1
                     total += 1
                     certificates += 1
+                    if userdate < course['end']:
+                        duringcourse += 1
 
                 certificates = len(UserCertificate.objects.using(db).filter(status='downloadable'))
 
@@ -105,6 +108,7 @@ def meta_courseinfo(request):
                 course['enrolments'] = total
                 course['enrolments_per_day'] = per_day
                 course['certificates'] = certificates
+                course['enroled_during_course'] = duringcourse
                 courses.append(course)
             except Exception as e:
                 print "COULDNT PARSE COURSE DATA FOR "+course['id']
