@@ -11,6 +11,9 @@ import pymongo
 from django.db import connections
 from datetime import date, datetime, timedelta
 
+import urllib2
+import json
+
 
 # Logging
 import logging
@@ -315,8 +318,9 @@ class Ingestor(models.Model):
 
 
 class CourseEvent(object):
-    def __init__(self, db_name, table_name, course_start):
+    def __init__(self, db_name, course, table_name, course_start):
         self.db_name = db_name
+        self.course = course
         self.table_name = table_name
         self.course_start = course_start
         print course_start
@@ -343,6 +347,136 @@ class CourseEvent(object):
 
         cursor.close()
 
+    def data_4_api(self):
+        data = {}
+        data['events'] = self.events
+        data['event_start'] = str(self.event_start)
+        data['event_end'] = str(self.event_end)
+        data['event_display_names'] = self.display_names(data['events'])
+
+        str_events = ', ' . join('SUM(%s)' % e for e in self.events)
+
+        cursor = connections[self.db_name].cursor()
+        query0 = 'SELECT ' + str_events + ' FROM ' + self.table_name
+        cursor.execute(query0)
+        result0 = cursor.fetchone()
+        sum_events = {}
+        happened_event_list = []
+        i = 0
+        for event in self.events:
+            #sum_event = 's_' + event[2::].replace("$", ".")
+            sum_count = int(result0[i])
+            #print type(result0[i])
+            sum_events[event] = sum_count
+            if sum_count > 0:
+                happened_event_list.append(event)
+            i += 1
+
+        data['sum_events'] = sum_events
+        data['happened_events'] = happened_event_list
+
+        # happened_events_values is an array of array. The hierarchy is event -- week -- value
+        happened_events_values = [[] for i in range(len(happened_event_list))]
+        print happened_events_values
+        #
+        date_list = []
+
+        str_happened_events = ', ' . join('SUM(%s)' % e for e in happened_event_list)
+        query = 'SELECT ' + str_happened_events + ' FROM ' + self.table_name + ' WHERE event_date BETWEEN "%s" AND "%s"'
+
+        d1 = self.course_start
+        d2 = self.course_start + timedelta(days=6)
+        #week_index = 0
+        while d2 < self.event_end:
+            date_list.append(str(d1))
+            cursor.execute(query % (d1, d2))
+            row = cursor.fetchone()
+            for index in range(len(happened_event_list)):
+                happened_events_values[index].append(row[index])
+            d1 = d2 + timedelta(days=1)
+            d2 = d1 + timedelta(days=6)
+
+        print happened_events_values
+        data['date_list'] = date_list
+        data['happened_events_values'] = happened_events_values
+
+        return data
+
+    def display_names(self, events):
+        json_file = self.course['dbname'].replace("_", "-") + ".json"
+        courseinfo = self.loadcourseinfo(json_file)
+        if courseinfo is None:
+            return 'Can not find course info for . ' + self.course['id']
+
+        event_display_names = self.get_event_display_names(courseinfo, events)
+        return event_display_names
+
+
+    @staticmethod
+    def loadcourseinfo(json_file):
+        """
+        Loads the course information from JSON course structure file
+        :param json_file: the name of the course structure file
+        :return the course information
+        """
+        courseurl = config.SERVER_URL + '/datasources/course_structure/' + json_file
+        courseinfofile = urllib2.urlopen(courseurl)
+        if courseinfofile:
+            courseinfo = json.load(courseinfofile)
+            return courseinfo
+        return None
+
+    @staticmethod
+    def get_event_display_names(courseinfo, events):
+
+        event_display_names = {}
+        for event in events:
+            event_display_names[event] = ''
+            #event_display_names[event[2::].replace("$", ".")] = ''
+
+        chapters = []
+        chapters = CourseEvent.get_chapters(courseinfo, chapters)
+
+        for chapter in chapters:
+            for sequential in chapter['children']:
+                if sequential['tag'] == 'sequential' and 'children' in sequential:
+                    for vertical in sequential['children']:
+                        if vertical['tag'] == 'vertical' and 'children' in vertical:
+                            for child in vertical['children']:
+                                if 'url_name' in child:
+                                    column_name = "u_" + child['url_name'].replace(".", "$")
+                                    for key, value in event_display_names.iteritems():
+                                        if column_name == key:
+                                            if 'display_name' in child:
+                                                event_display_names[key] = child['display_name']
+                                            else:
+                                                event_display_names[key] = child['url_name']
+                                            break
+
+        return event_display_names
+
+
+
+
+    @staticmethod
+    def get_chapters(obj, found=None):
+        """
+        Gets the chapter for the object (recursive)
+        :param obj: the object being added
+        :param found: an array of previously found elements
+        :return the found object
+        """
+        if not found:
+            found = []
+        if obj['tag'] == 'chapter':
+            found.append(obj)
+        else:
+            for child in obj['children']:
+                found = CourseEvent.get_chapters(child, found)
+        return found
+
+
+
     def counts_group_by_week(self):
         #str_events = ', ' . join('SUM(%s)' % e for e in self.events)
         #query = 'SELECT ' + str_events + ' From ' + self.table_name
@@ -353,7 +487,7 @@ class CourseEvent(object):
         for event in self.events:
             sum_field = 's_' + event[2::].replace("$", ".")
             sum_events.append(sum_field)
-            eventcount[sum_field] = {}
+            eventcount[sum_field] = []
 
         str_events = ', ' . join('SUM(%s)' % e for e in self.events)
 
@@ -370,7 +504,7 @@ class CourseEvent(object):
             cursor.execute(query % (d1, d2))
             row = cursor.fetchone()
             for index, sum_field in enumerate(sum_events):
-                eventcount[sum_field][str(d1)] = row[index]
+                eventcount[sum_field].append([str(d1), row[index]])
             d1 = d2 + timedelta(days=1)
             d2 = d1 + timedelta(days=6)
 
