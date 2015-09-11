@@ -323,7 +323,7 @@ class CourseEvent(object):
         self.course = course
         self.table_name = table_name
         self.course_start = course_start
-        print course_start
+        #print course_start
         cursor = connections[db_name].cursor()
 
         self.events = []
@@ -341,9 +341,9 @@ class CourseEvent(object):
             self.course_start = self.event_start
         cursor.execute('SELECT MAX(%s) FROM %s' % ('event_date', table_name))
         self.event_end = cursor.fetchone()[0]
-        print self.event_start
+        #print self.event_start
         #print type(self.event_start)
-        print self.event_end
+        #print self.event_end
 
         cursor.close()
 
@@ -377,7 +377,7 @@ class CourseEvent(object):
 
         # happened_events_values is an array of array. The hierarchy is event -- week -- value
         happened_events_values = [[] for i in range(len(happened_event_list))]
-        print happened_events_values
+        #print happened_events_values
         #
         date_list = []
 
@@ -396,7 +396,7 @@ class CourseEvent(object):
             d1 = d2 + timedelta(days=1)
             d2 = d1 + timedelta(days=6)
 
-        print happened_events_values
+        #print happened_events_values
         data['date_list'] = date_list
         data['happened_events_values'] = happened_events_values
 
