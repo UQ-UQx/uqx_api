@@ -400,6 +400,7 @@ def student_agesinrange(request, course_id='all'):
             if user_id in user_ids:
                 day_data[thedate]['user_in_range'] += 1
 
+    # check if it is 0
     if sum_know_age == 0:
         sum_percentage = 0
     else:
