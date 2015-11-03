@@ -6,12 +6,12 @@ from rest_framework.decorators import api_view, permission_classes
 from api.models import UserProfile, UserEnrol, Log, StudentModule, PersonCourse
 from collections import OrderedDict
 import datetime
+from datetime import timedelta
 from rest_framework.permissions import AllowAny
-import random
 import dateutil
-import time
 import config
 import dateutil.parser
+import uqx_api.courses
 
 # Logging
 import logging
@@ -348,9 +348,94 @@ def student_dates(request, course_id='all'):
         activecount += data[date]['active']
         data[date]['aggregate_enrolled'] = count
         data[date]['aggregate_active'] = activecount
+    return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+def student_agesinrange(request, course_id='all'):
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
 
+    age_range = {'start': 13, 'end': 17}
+    data = OrderedDict()
+
+    courses = []
+    if course_id is 'all':
+        courselist = api.views.get_all_courses()
+        for course in courselist:
+            courses.append(courselist[course]['id'])
+        pass
+    else:
+        course = api.views.get_course(course_id)
+        if course is None:
+            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+        courses.append(course['id'])
+
+    sum_in_range = 0
+    sum_know_age = 0
+    day_data = OrderedDict()
+    for course in courses:
+        user_ids = []
+        user_know_age_ids = []
+        course_year = int(uqx_api.courses.EDX_DATABASES[course]['year'])
+        start_year_of_birth = course_year - age_range['end']
+        end_year_of_birth = course_year - age_range['start']
+
+        # Get all user_id who is in age_range
+        for user in UserProfile.objects.using(course).filter(year_of_birth__range=(start_year_of_birth, end_year_of_birth)):
+            user_ids.append(user.user_id)
+        sum_in_range += len(user_ids)
+
+        # Get all user_id who provided year_of_birth
+        for user in UserProfile.objects.using(course).filter(year_of_birth__isnull=False).exclude(year_of_birth__iexact='NULL'):
+            user_know_age_ids.append(user.user_id)
+        sum_know_age += len(user_know_age_ids)
+
+        for enrollment in UserEnrol.objects.using(course).filter(user_id__in=user_know_age_ids):
+            user_id = enrollment.user_id
+            thedate = enrollment.created.date()
+            if thedate not in day_data:
+                day_data[thedate] = {'user_know_age': 0, 'user_in_range': 0}
+            day_data[thedate]['user_know_age'] += 1
+            if user_id in user_ids:
+                day_data[thedate]['user_in_range'] += 1
+
+    sum_percentage = round(sum_in_range * 100 / float(sum_know_age), 2)
+    data['sum'] = {'user_know_age': sum_know_age, 'user_in_range': sum_in_range, 'percentage': sum_percentage}
+
+    day_data = OrderedDict(sorted(day_data.iteritems()))
+    week_data = OrderedDict()
+
+    day_start = day_data.keys()[0]
+    day_end = day_data.keys()[-1]
+    data['start_date'] = day_start.strftime('%Y-%m-%d')
+    data['end_date'] = day_end.strftime('%Y-%m-%d')
+
+    d1 = day_start
+    week = 1
+    while d1 < day_end:
+        user_know_age_week = 0
+        user_in_range_week = 0
+        for i in range(7):
+            if d1 in day_data:
+                #print 'd1 is in'
+                user_know_age_week += day_data[d1]['user_know_age']
+                user_in_range_week += day_data[d1]['user_in_range']
+            #else:
+                #print 'd1 is not in'
+            #print d1
+            d1 += timedelta(days=1)
+        week_percentage = round(user_in_range_week * 100 / float(user_know_age_week), 2)
+        week_data['week ' + str(week)] = {'user_know_age': user_know_age_week, 'user_in_range': user_in_range_week, 'percentage': week_percentage}
+        week += 1
+
+    day_data_str = OrderedDict()
+    for date in day_data:
+        date_str = date.strftime('%Y-%m-%d')
+        day_data_str[date_str] = day_data[date]
+
+    data['week_data'] = week_data
+    data['day_data'] = day_data_str
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 

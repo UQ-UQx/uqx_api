@@ -11,3 +11,5 @@ youtube_oauth2.json
 cache/youtube_hypers_301x_1T2014_oauth2.json
 
 api/apis/meta_old.py
+
+uqx_api/courses.py
