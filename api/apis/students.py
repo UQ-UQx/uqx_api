@@ -400,7 +400,10 @@ def student_agesinrange(request, course_id='all'):
             if user_id in user_ids:
                 day_data[thedate]['user_in_range'] += 1
 
-    sum_percentage = round(sum_in_range * 100 / float(sum_know_age), 2)
+    if sum_know_age == 0:
+        sum_percentage = 0
+    else:
+        sum_percentage = round(sum_in_range * 100 / float(sum_know_age), 2)
     data['sum'] = {'user_know_age': sum_know_age, 'user_in_range': sum_in_range, 'percentage': sum_percentage}
 
     day_data = OrderedDict(sorted(day_data.iteritems()))
@@ -425,7 +428,10 @@ def student_agesinrange(request, course_id='all'):
                 #print 'd1 is not in'
             #print d1
             d1 += timedelta(days=1)
-        week_percentage = round(user_in_range_week * 100 / float(user_know_age_week), 2)
+        if user_know_age_week == 0:
+            week_percentage = 0
+        else:
+            week_percentage = round(user_in_range_week * 100 / float(user_know_age_week), 2)
         week_data['week ' + str(week)] = {'user_know_age': user_know_age_week, 'user_in_range': user_in_range_week, 'percentage': week_percentage}
         week += 1
 
