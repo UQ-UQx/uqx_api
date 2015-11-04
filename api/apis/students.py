@@ -352,7 +352,7 @@ def student_dates(request, course_id='all'):
 
 
 @api_view(['GET'])
-def student_agesinrange(request, course_id='all'):
+def student_in_age_range(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
 
@@ -372,40 +372,40 @@ def student_agesinrange(request, course_id='all'):
         courses.append(course['id'])
 
     sum_in_range = 0
-    sum_know_age = 0
+    sum_known_age = 0
     day_data = OrderedDict()
     for course in courses:
-        user_ids = []
-        user_know_age_ids = []
+        user_in_range_ids = []
+        user_known_age_ids = []
         course_year = int(uqx_api.courses.EDX_DATABASES[course]['year'])
         start_year_of_birth = course_year - age_range['end']
         end_year_of_birth = course_year - age_range['start']
 
         # Get all user_id who is in age_range
         for user in UserProfile.objects.using(course).filter(year_of_birth__range=(start_year_of_birth, end_year_of_birth)):
-            user_ids.append(user.user_id)
-        sum_in_range += len(user_ids)
+            user_in_range_ids.append(user.user_id)
+        sum_in_range += len(user_in_range_ids)
 
         # Get all user_id who provided year_of_birth
         for user in UserProfile.objects.using(course).filter(year_of_birth__isnull=False).exclude(year_of_birth__iexact='NULL'):
-            user_know_age_ids.append(user.user_id)
-        sum_know_age += len(user_know_age_ids)
+            user_known_age_ids.append(user.user_id)
+        sum_known_age += len(user_known_age_ids)
 
-        for enrollment in UserEnrol.objects.using(course).filter(user_id__in=user_know_age_ids):
+        for enrollment in UserEnrol.objects.using(course).filter(user_id__in=user_known_age_ids):
             user_id = enrollment.user_id
             thedate = enrollment.created.date()
             if thedate not in day_data:
-                day_data[thedate] = {'user_know_age': 0, 'user_in_range': 0}
-            day_data[thedate]['user_know_age'] += 1
-            if user_id in user_ids:
+                day_data[thedate] = {'user_known_age': 0, 'user_in_range': 0}
+            day_data[thedate]['user_known_age'] += 1
+            if user_id in user_in_range_ids:
                 day_data[thedate]['user_in_range'] += 1
 
     # check if it is 0
-    if sum_know_age == 0:
+    if sum_known_age == 0:
         sum_percentage = 0
     else:
-        sum_percentage = round(sum_in_range * 100 / float(sum_know_age), 2)
-    data['sum'] = {'user_know_age': sum_know_age, 'user_in_range': sum_in_range, 'percentage': sum_percentage}
+        sum_percentage = round(sum_in_range * 100 / float(sum_known_age), 2)
+    data['sum'] = {'user_known_age': sum_known_age, 'user_in_range': sum_in_range, 'percentage': sum_percentage}
 
     day_data = OrderedDict(sorted(day_data.iteritems()))
     week_data = OrderedDict()
@@ -418,22 +418,22 @@ def student_agesinrange(request, course_id='all'):
     d1 = day_start
     week = 1
     while d1 < day_end:
-        user_know_age_week = 0
+        user_known_age_week = 0
         user_in_range_week = 0
         for i in range(7):
             if d1 in day_data:
                 #print 'd1 is in'
-                user_know_age_week += day_data[d1]['user_know_age']
+                user_known_age_week += day_data[d1]['user_known_age']
                 user_in_range_week += day_data[d1]['user_in_range']
             #else:
                 #print 'd1 is not in'
             #print d1
             d1 += timedelta(days=1)
-        if user_know_age_week == 0:
+        if user_known_age_week == 0:
             week_percentage = 0
         else:
-            week_percentage = round(user_in_range_week * 100 / float(user_know_age_week), 2)
-        week_data['week ' + str(week)] = {'user_know_age': user_know_age_week, 'user_in_range': user_in_range_week, 'percentage': week_percentage}
+            week_percentage = round(user_in_range_week * 100 / float(user_known_age_week), 2)
+        week_data['week ' + str(week)] = {'user_known_age': user_known_age_week, 'user_in_range': user_in_range_week, 'percentage': week_percentage}
         week += 1
 
     day_data_str = OrderedDict()
