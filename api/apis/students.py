@@ -416,10 +416,10 @@ def student_in_age_range(request, course_id='all'):
     data['end_date'] = day_end.strftime('%Y-%m-%d')
 
     d1 = day_start
-    week = 1
     while d1 < day_end:
         user_known_age_week = 0
         user_in_range_week = 0
+        week = d1.strftime('%Y-%m-%d')
         for i in range(7):
             if d1 in day_data:
                 #print 'd1 is in'
@@ -433,8 +433,7 @@ def student_in_age_range(request, course_id='all'):
             week_percentage = 0
         else:
             week_percentage = round(user_in_range_week * 100 / float(user_known_age_week), 2)
-        week_data['week ' + str(week)] = {'user_known_age': user_known_age_week, 'user_in_range': user_in_range_week, 'percentage': week_percentage}
-        week += 1
+        week_data[week] = {'user_known_age': user_known_age_week, 'user_in_range': user_in_range_week, 'percentage': week_percentage}
 
     day_data_str = OrderedDict()
     for date in day_data:
