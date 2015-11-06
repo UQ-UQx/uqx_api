@@ -95,6 +95,7 @@ def endpoints():
     #points['student_activity'] = {'path': 'students/student_activity', 'option': 'course_id', 'requirevar': True}
     points['student_personcourse'] = {'path': 'students/personcourse', 'option': 'course_id', 'requirevar': True}
     points['student_in_age_range'] = {'path': 'students/inagerange', 'option': 'course_id'}
+    points['student_in_age_range_together'] = {'path': 'students/inagerangetogether'}
 
     points['discussion_countries'] = {'path': 'discussions/countries', 'option': 'course_id'}
     points['discussion_dates'] = {'path': 'discussions/dates', 'option': 'course_id', 'requirevar': True}

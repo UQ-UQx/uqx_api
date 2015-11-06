@@ -352,15 +352,32 @@ def student_dates(request, course_id='all'):
 
 
 @api_view(['GET'])
+def student_in_age_range_together(request):
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+
+    age_range = {'start': 13, 'end': 17}
+    data = {}
+
+    courselist = api.views.get_all_courses()
+    courses_all = []
+    for course in courselist:
+        courses = [courselist[course]['id']]
+        print courses
+        courses_all.append(courselist[course]['id'])
+        data[courselist[course]['id']] = student_in_age_range_xx(courses, age_range)
+    data['all'] = student_in_age_range_xx(courses_all, age_range)
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def student_in_age_range(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
 
     age_range = {'start': 13, 'end': 17}
-    data = OrderedDict()
-
     courses = []
-    if course_id is 'all':
+    if course_id == 'all':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -370,6 +387,13 @@ def student_in_age_range(request, course_id='all'):
         if course is None:
             return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
         courses.append(course['id'])
+
+    data = student_in_age_range_xx(courses, age_range)
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+def student_in_age_range_xx(courses, age_range):
+    data = OrderedDict()
 
     sum_in_range = 0
     sum_known_age = 0
@@ -453,7 +477,7 @@ def student_in_age_range(request, course_id='all'):
     data['month_data'] = month_data
     data['week_data'] = week_data
     data['day_data'] = day_data_str
-    return api.views.api_render(request, data, status.HTTP_200_OK)
+    return data
 
 
 @api_view(['GET'])
