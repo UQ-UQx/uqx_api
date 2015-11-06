@@ -357,7 +357,7 @@ def student_in_age_range_together(request):
         return api.views.api_cacherender(request)
 
     age_range = {'start': 13, 'end': 17}
-    data = {}
+    data = OrderedDict()
 
     courselist = api.views.get_all_courses()
     courses_all = []
@@ -367,6 +367,8 @@ def student_in_age_range_together(request):
         courses_all.append(courselist[course]['id'])
         data[courselist[course]['id']] = student_in_age_range_xx(courses, age_range)
     data['all'] = student_in_age_range_xx(courses_all, age_range)
+
+    data = OrderedDict(sorted(data.iteritems()))
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 
