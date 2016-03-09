@@ -10,3 +10,5 @@ cache/youtube_*_oauth2.json
 /test/
 
 api/apis/meta_old.py
+
+uqx_api/courses.py

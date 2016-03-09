@@ -6,12 +6,12 @@ from rest_framework.decorators import api_view, permission_classes
 from api.models import UserProfile, UserEnrol, Log, StudentModule, PersonCourse
 from collections import OrderedDict
 import datetime
+from dateutil.relativedelta import relativedelta
 from rest_framework.permissions import AllowAny
-import random
 import dateutil
-import time
 import config
 import dateutil.parser
+import uqx_api.courses
 
 # Logging
 import logging
@@ -348,10 +348,138 @@ def student_dates(request, course_id='all'):
         activecount += data[date]['active']
         data[date]['aggregate_enrolled'] = count
         data[date]['aggregate_active'] = activecount
-
-
-
     return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def student_in_age_range_together(request):
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+
+    age_range = {'start': 13, 'end': 17}
+    data = OrderedDict()
+
+    courselist = api.views.get_all_courses()
+    courses_all = []
+    for course in courselist:
+        courses = [courselist[course]['id']]
+        print courses
+        courses_all.append(courselist[course]['id'])
+        data[courselist[course]['id']] = student_in_age_range_xx(courses, age_range)
+    data['all'] = student_in_age_range_xx(courses_all, age_range)
+
+    data = OrderedDict(sorted(data.iteritems()))
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def student_in_age_range(request, course_id='all'):
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+
+    age_range = {'start': 13, 'end': 17}
+    courses = []
+    if course_id == 'all':
+        courselist = api.views.get_all_courses()
+        for course in courselist:
+            courses.append(courselist[course]['id'])
+        pass
+    else:
+        course = api.views.get_course(course_id)
+        if course is None:
+            return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+        courses.append(course['id'])
+
+    data = student_in_age_range_xx(courses, age_range)
+    return api.views.api_render(request, data, status.HTTP_200_OK)
+
+
+def student_in_age_range_xx(courses, age_range):
+    data = OrderedDict()
+
+    sum_in_range = 0
+    sum_known_age = 0
+    day_data = OrderedDict()
+    for course in courses:
+        user_in_range_ids = []
+        user_known_age_ids = []
+        course_year = int(uqx_api.courses.EDX_DATABASES[course]['year'])
+        start_year_of_birth = course_year - age_range['end']
+        end_year_of_birth = course_year - age_range['start']
+
+        # Get all user_id who is in age_range
+        for user in UserProfile.objects.using(course).filter(year_of_birth__range=(start_year_of_birth, end_year_of_birth)):
+            user_in_range_ids.append(user.user_id)
+        sum_in_range += len(user_in_range_ids)
+
+        # Get all user_id who provided year_of_birth
+        for user in UserProfile.objects.using(course).filter(year_of_birth__isnull=False).exclude(year_of_birth__iexact='NULL'):
+            user_known_age_ids.append(user.user_id)
+        sum_known_age += len(user_known_age_ids)
+
+        for enrollment in UserEnrol.objects.using(course).filter(user_id__in=user_known_age_ids):
+            user_id = enrollment.user_id
+            thedate = enrollment.created.date()
+            if thedate not in day_data:
+                day_data[thedate] = {'user_known_age': 0, 'user_in_range': 0}
+            day_data[thedate]['user_known_age'] += 1
+            if user_id in user_in_range_ids:
+                day_data[thedate]['user_in_range'] += 1
+
+    if sum_known_age > 0:
+        sum_percentage = round(sum_in_range * 100 / float(sum_known_age), 2)
+        data['sum'] = {'user_known_age': sum_known_age, 'user_in_range': sum_in_range, 'percentage': sum_percentage}
+    else:
+        data['sum'] = {}
+
+    day_data = OrderedDict(sorted(day_data.iteritems()))
+    day_start = day_data.keys()[0]
+    day_end = day_data.keys()[-1]
+    data['start_date'] = day_start.strftime('%Y-%m-%d')
+    data['end_date'] = day_end.strftime('%Y-%m-%d')
+
+    # Accumulating weekly
+    week_data = OrderedDict()
+    d1 = day_start
+    while d1 < day_end:
+        user_known_age_week = 0
+        user_in_range_week = 0
+        week = d1.strftime('%Y-%m-%d')
+        for i in range(7):
+            if d1 in day_data:
+                user_known_age_week += day_data[d1]['user_known_age']
+                user_in_range_week += day_data[d1]['user_in_range']
+            d1 += datetime.timedelta(days=1)
+        if user_known_age_week > 0:
+            week_percentage = round(user_in_range_week * 100 / float(user_known_age_week), 2)
+            week_data[week] = {'user_known_age': user_known_age_week, 'user_in_range': user_in_range_week, 'percentage': week_percentage}
+
+    # Accumulating monthly
+    month_data = OrderedDict()
+    d1 = datetime.date(day_start.year, day_start.month, 1)
+    while d1 < day_end:
+        print d1
+        user_known_age_month = 0
+        user_in_range_month = 0
+        d2 = d1 + relativedelta(months=+1)
+        for date in day_data:
+            if date >= d1 and date < d2:
+                user_known_age_month += day_data[date]['user_known_age']
+                user_in_range_month += day_data[date]['user_in_range']
+        if user_known_age_month > 0:
+            month_percentage = round(user_in_range_month * 100 / float(user_known_age_month), 2)
+            month_data[d1.strftime('%Y-%m-%d')] = {'user_known_age': user_known_age_month, 'user_in_range': user_in_range_month, 'percentage': month_percentage}
+        d1 = d2
+
+    day_data_str = OrderedDict()
+    for date in day_data:
+        date_str = date.strftime('%Y-%m-%d')
+        day_data_str[date_str] = day_data[date]
+
+    data['month_data'] = month_data
+    data['week_data'] = week_data
+    data['day_data'] = day_data_str
+    return data
 
 
 @api_view(['GET'])

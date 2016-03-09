@@ -64,7 +64,7 @@ def meta_courseinfo(request):
         coursedb = api.views.get_course(course['id'])
 
         filename = uqx_api.courses.EDX_DATABASES[db]['discussiontable'].replace("/", "-").replace("-prod", "")
-        courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json';
+        courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
         data = '[]'
         try:
             data = urllib2.urlopen(courseurl).read().replace('<script','').replace('</script>','')
@@ -401,8 +401,10 @@ def meta_courseevents(request, course_id='all'):
     app_label = 'courseevent'
     table_name = course['id']
 
-    ce = CourseEvent(db_name, app_label + '_' + table_name, course_start)
-    data = ce.counts_group_by_week()
+    ce = CourseEvent(db_name, course, app_label + '_' + table_name, course_start)
+    data = ce.data_4_api()
+
+    #data = ce.counts_group_by_week()
 
     """
     # Dynamic Model
