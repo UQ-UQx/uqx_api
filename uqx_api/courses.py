@@ -34,7 +34,7 @@ EDX_DATABASES = {
     'teams_101x_1T2016': {'dbname': 'UQx_Teams101x_1T2016', 'mongoname': 'course-v1:UQx+Teams101x+1T2016', 'discussiontable': 'UQx-Teams101x-1T2016-prod', 'icon': 'fa-users', 'year': '2016', 'term': '1T'},
 
     'think_101x_1T2014': {'dbname': 'UQx_Think101x_1T2014', 'mongoname': 'UQx/Think101x/1T2014', 'discussiontable': 'UQx-Think101x-1T2014-prod', 'icon': 'fa-heart', 'year': '2014', 'term': '1T'},
-    'think_101x_2T2015': {'dbname': 'UQx_Think101x_2T2015', 'mongoname': 'course-v1:UQx+Think101x+2T2015', 'discussiontable': 'UQx-Think101x-2T2015-prod', 'icon':'fa-heart', 'year':'2015', 'term': ''},
+    'think_101x_2T2015': {'dbname': 'UQx_Think101x_2T2015', 'mongoname': 'course-v1:UQx+Think101x+2T2015', 'discussiontable': 'UQx-Think101x-2T2015-prod', 'icon':'fa-heart', 'year':'2015', 'term': '2T'},
     'think_101x_1T2016': {'dbname': 'UQx_Think101x_1T2016', 'mongoname': 'course-v1:UQx+Think101x+1T2016', 'discussiontable': 'UQx-Think101x-1T2016-prod', 'icon': 'fa-heart', 'year': '2016', 'term': '1T'},
 
 
