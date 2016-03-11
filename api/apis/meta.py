@@ -64,7 +64,8 @@ def meta_courseinfo(request):
 
         coursedb = api.views.get_course(course['id'])
 
-        filename = uqx_api.courses.EDX_DATABASES[db]['discussiontable'].replace("/", "-").replace("-prod", "")
+        #filename = uqx_api.courses.EDX_DATABASES[db]['discussiontable'].replace("/", "-").replace("-prod", "")
+        filename = uqx_api.courses.EDX_DATABASES[db]['dbname'].replace("_", "-")
         courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
         data = '[]'
         try:
@@ -112,14 +113,11 @@ def meta_courseinfo(request):
                 course['enroled_during_course'] = duringcourse
                 courses.append(course)
             except Exception as e:
-                print "COULDNT PARSE COURSE DATA FOR "+course['id']
                 logger.info("COULDNT PARSE COURSE DATA FOR "+course['id'])
                 logger.info("COURSE URL: "+str(courseurl))
                 logger.info(e)
-                print data
                 pass
         except Exception as e:
-            print "COULDNT PARSE COURSE "+course['id']
             logger.info("COULDNT PARSE COURSE "+course['id'])
             logger.info("COURSE URL: "+str(courseurl))
             logger.info(e)
@@ -198,14 +196,14 @@ def meta_structure(request, course_id=''):
     if course is None:
         return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
 
-    filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
+    #filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
+    filename = course['dbname'].replace("_", "-")
     courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
     data = '[]'
     try:
         data = urllib2.urlopen(courseurl).read().replace('<script', '').replace('</script>', '')
     except:
         return api.views.api_render(request, {'error': 'Could not find course file: Looking for '+str(courseurl)}, status.HTTP_404_NOT_FOUND)
-    print courseurl
     data = json.loads(data)
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
@@ -377,20 +375,20 @@ def meta_courseevents(request, course_id='all'):
         course = api.views.get_course(course_id)
         if course is None:
             return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
-    print course
+    #print course
 
     # Reading course_start from course info
     course_start = None
-    filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
+    #filename = course['discussiontable'].replace("/", "-").replace("-prod", "")
+    filename = course['dbname'].replace("_", "-")
     courseurl = config.SERVER_URL + '/datasources/course_structure/'+filename+'.json'
     try:
         courseinfo = urllib2.urlopen(courseurl).read().replace('<script', '').replace('</script>', '')
         courseinfo = json.loads(courseinfo)
         if 'start' in courseinfo:
             course_start = courseinfo['start']
-            print course_start
+            #print course_start
     except Exception as e:
-        print "COULDNT PARSE COURSE "+course['id']
         logger.info("COULDNT PARSE COURSE "+course['id'])
         logger.info("COURSE URL: "+str(courseurl))
         logger.info(e)
