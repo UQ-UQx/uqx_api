@@ -39,7 +39,7 @@ EDX_DATABASES = {
 
 
     'tropic_101x_1T2014': {'dbname': 'UQx_TROPIC101x_1T2014', 'mongoname': 'UQx/TROPIC101x/1T2014', 'discussiontable': 'UQx-TROPIC101x-1T2014-prod', 'icon': 'fa-tree', 'year': '2014', 'term': '1T'},
-    'tropic_101x_2T2015': {'dbname': 'UQx_Tropic101_2T2015', 'mongoname': 'UQx/TROPIC101x/2T2015', 'discussiontable': 'UQx-TROPIC101x-2T2015-prod', 'icon': 'fa-tree', 'year': '2015', 'term': '2T'},
+    'tropic_101x_2T2015': {'dbname': 'UQx_Tropic101_2T2015', 'mongoname': 'UQx/TROPIC101x/2T2015', 'discussiontable': 'UQx-Tropic101-2T2015-prod', 'icon': 'fa-tree', 'year': '2015', 'term': '2T'},
     'tropic_101x_3T2015': {'dbname': 'UQx_Tropic101_3T2015', 'mongoname': 'course-v1:UQx+Tropic101+3T2015', 'discussiontable': 'UQx-Tropic101-3T2015-prod', 'icon': 'fa-tree', 'year': '2015', 'term': '3T'},
 
     'world_101x_3T2014': {'dbname': 'UQx_World101x_3T2014', 'mongoname': 'UQx/World101x/3T2014', 'discussiontable': 'UQx-World101x-3T2014-prod', 'icon': 'fa-map-marker', 'year': '2014', 'term': '3T'},
