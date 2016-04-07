@@ -180,11 +180,34 @@ def meta_modes(request):
     data['verified'] = {'name': 'verified', 'description': ''}
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
+@api_view(['GET'])
+def meta_coursestructure(request, course_id=''):
+    """
+    Returns a nested structure of the course structure for an edX course
+    """
+    if course_id is '':
+        return api.views.api_render(request, {'error': 'Must supply a course ID'}, status.HTTP_400_BAD_REQUEST)
+    if api.views.is_cached(request):
+        return api.views.api_cacherender(request)
+        
+    course = api.views.get_course(course_id)
+    if course is None:
+        return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
+        
+    filename = course['csjson']
+    courseurl = config.SERVER_URL + '/datasources/edx_course_structure/' + filename
+    data = '[]'
+    try:
+        data = urllib2.urlopen(courseurl).read().replace('<script', '').replace('</script>', '')
+    except:
+        return api.views.api_render(request, {'error': 'Could not find course file: Looking for '+str(courseurl)}, status.HTTP_404_NOT_FOUND)
+    data = json.loads(data)
+    return api.views.api_render(request, data, status.HTTP_200_OK)
 
 @api_view(['GET'])
 def meta_structure(request, course_id=''):
-
     """
+    depreciated
     Returns a nested structure of the course structure for an edX course
     """
     if course_id is '':
