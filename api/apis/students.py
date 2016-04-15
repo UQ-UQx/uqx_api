@@ -26,7 +26,7 @@ def student_genders(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -73,7 +73,7 @@ def student_ages(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -145,7 +145,7 @@ def student_fullages(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -193,7 +193,7 @@ def student_educations(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -250,8 +250,8 @@ def student_modes(request, course_id='all'):
     """
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
-    courses = []
-    if course_id is 'all':
+    courses = []    
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -261,6 +261,7 @@ def student_modes(request, course_id='all'):
         if course is None:
             return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
         courses.append(course['id'])
+        
     modes = {'audit':0,'honor':0,'verified':0}
     total = 0
 
@@ -289,7 +290,7 @@ def student_countries(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -319,7 +320,7 @@ def student_dates(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -379,7 +380,7 @@ def student_in_age_range(request, course_id='all'):
 
     age_range = {'start': 13, 'end': 17}
     courses = []
-    if course_id == 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -487,7 +488,7 @@ def student_active(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])

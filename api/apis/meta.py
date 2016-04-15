@@ -238,7 +238,7 @@ def meta_courseprofile(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -273,7 +273,7 @@ def meta_enrolcount(request, course_id='all'):
     data = OrderedDict()
 
     courses = []
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courselist = api.views.get_all_courses()
         for course in courselist:
             courses.append(courselist[course]['id'])
@@ -392,7 +392,7 @@ def meta_courseevents(request, course_id='all'):
     """
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
-    if course_id is 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         return api.views.api_render(request, {'error': 'Unknown course code'}, status.HTTP_404_NOT_FOUND)
     else:
         course = api.views.get_course(course_id)

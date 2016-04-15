@@ -16,7 +16,7 @@ def discussion_countries(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = {}
-    if course_id == 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courses = api.views.get_all_courses()
     else:
         course = api.views.get_course(course_id)
@@ -128,7 +128,7 @@ def discussion_popular(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = {}
-    if course_id == 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courses = api.views.get_all_courses()
     else:
         course = api.views.get_course(course_id)
@@ -150,7 +150,7 @@ def discussion_top(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
     courses = {}
-    if course_id == 'all':
+    if course_id == 'all' or course_id == 'allcourses':
         courses = api.views.get_all_courses()
     else:
         course = api.views.get_course(course_id)
