@@ -19,7 +19,7 @@ EDX_DATABASES = {
     'crime_101x_1T2016': {'dbname': 'UQx_Crime101x_1T2016', 'mongoname': 'course-v1:UQx+Crime101x+1T2016', 'discussiontable': 'UQx-Crime101x-1T2016-prod', 'csjson': 'UQx-Crime101x-1T2016-course_structure-prod-analytics.json', 'icon': 'fa-gavel', 'year': '2016', 'term': '1T'},
 
     'denial_101x_1T2015': {'dbname': 'UQx_Denial101x_1T2015', 'mongoname': 'UQx/Denial101x/1T2015', 'discussiontable': 'UQx-Denial101x-1T2015-prod', 'csjson': 'UQx-Denial101x-1T2015-course_structure-prod-analytics.json', 'icon': 'fa-recycle', 'year': '2015', 'term': '1T'},
-    'denial_101x_2T2015': {'dbname': 'UQx_Denial101x_2T2015', 'mongoname': 'UQx/Denial101x/2T2015', 'discussiontable': 'UQx-Denial101x-2T2015-prod', 'csjson': 'UQx-Denial101x-2T2015-course_structure-prod-analytics.json', 'icon': 'fa-recycle', 'year': '2015', 'term': '2T'},
+    'denial_101x_2T2015': {'dbname': 'UQx_Denial101x_2T2015', 'mongoname': 'course-v1:UQx+Denial101x+2T2015', 'discussiontable': 'UQx-Denial101x-2T2015-prod', 'csjson': 'UQx-Denial101x-2T2015-course_structure-prod-analytics.json', 'icon': 'fa-recycle', 'year': '2015', 'term': '2T'},
 
     'employ_101x_1T2016': {'dbname': 'UQx_Employ101x_1T2016', 'mongoname': 'course-v1:UQx+Employ101x+1T2016', 'discussiontable': 'UQx-Employ101x-1T2016-prod', 'csjson': 'UQx-Employ101x-1T2016-course_structure-prod-analytics.json', 'icon': 'fa-money', 'year': '2016', 'term': '1T'},
 
