@@ -181,6 +181,7 @@ def meta_modes(request):
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_coursestructure(request, course_id=''):
     """
     Returns a nested structure of the course structure for an edX course
@@ -205,6 +206,7 @@ def meta_coursestructure(request, course_id=''):
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_structure(request, course_id=''):
     """
     depreciated
@@ -231,6 +233,7 @@ def meta_structure(request, course_id=''):
     return api.views.api_render(request, data, status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_courseprofile(request, course_id='all'):
     """
     Returns derived course profiles for a course
@@ -386,6 +389,7 @@ def meta_ingeststatus(request):
     return api.views.api_render(request, ingestions, status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def meta_courseevents(request, course_id='all'):
     """
     Returns the data of course events

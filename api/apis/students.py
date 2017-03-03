@@ -316,6 +316,7 @@ def student_countries(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_dates(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
@@ -353,6 +354,7 @@ def student_dates(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_in_age_range_together(request):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
@@ -374,6 +376,7 @@ def student_in_age_range_together(request):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_in_age_range(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
@@ -484,6 +487,7 @@ def student_in_age_range_xx(courses, age_range):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_active(request, course_id='all'):
     if api.views.is_cached(request):
         return api.views.api_cacherender(request)
@@ -531,6 +535,7 @@ def student_active(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_activity(request, course_id='all'):
     starttime = datetime.datetime.now()
     grouptypes = True
@@ -617,6 +622,7 @@ def student_activity(request, course_id='all'):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def student_personcourse(request, course_id='all'):
     """
     Lists all genders for the enrolled students
