@@ -1,5 +1,5 @@
 Cheetah==2.4.4
-Django==1.6.6
+Django==1.11.28
 FormEncode==1.2.4
 GnuPGInterface==0.3.2
 M2Crypto==0.21.1
