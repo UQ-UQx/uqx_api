@@ -9,7 +9,7 @@ Paste==1.7.5.1
 PasteDeploy==1.5.0
 PasteScript==1.7.5
 PyJWT==0.2.1
-PyYAML==3.10
+PyYAML==5.4
 apache-log-parser==1.4.0
 apt-xapian-index==0.44
 argparse==1.2.1
