@@ -55,7 +55,7 @@ python-apt==0.8.3ubuntu7.2
 python-dateutil==2.1
 python-debian==0.1.21ubuntu1
 python-gflags==2.0
-python-ldap==2.4.18
+python-ldap==3.4.0
 python-memcached==1.53
 python-openid==2.2.5
 python-termstyle==0.1.10
