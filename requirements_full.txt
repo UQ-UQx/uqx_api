@@ -41,7 +41,7 @@ maxminddb==1.0.0
 meld3==1.0.0
 mongoengine==0.8.7
 newrelic==2.34.0.29
-numpy==1.6.1
+numpy==1.21.0
 oauth==1.0.1
 paramiko==1.7.7.1
 pep8==1.4.6
