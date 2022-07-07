@@ -60,7 +60,7 @@ python-memcached==1.53
 python-openid==2.2.5
 python-termstyle==0.1.10
 pytz==2011k
-requests==2.2.1
+requests==2.20.0
 scgi==1.13
 shortuuid==0.4.2
 simplejson==3.3.3
